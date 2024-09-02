@@ -1,3 +1,28 @@
+#AUTOCHECK NOTAS:
+#Criar um dicionario para os clientes
+
+dicionario_infos = {"consulta": {
+                1: 
+                    ("\nDIAGNÓSTICO " + 
+                "\n\nDescrição: \n"+
+                "\nRealiza o diagnóstico do problema do automóvel através do código de falha, "+
+                "podendo ser fornecido diretamente ou diagnosticado conforme responda aos campos do decorrer das solicitações do programa. " + 
+                "Após esse processo, o programa envia para a CAPS mais qualificada sobre o diagnóstico e agendando a visita futura, mostrando o código de falha, CAPS que irá realizar o atendimento e o Código de Diagnóstico.\n"),
+                2: 
+                    ("\nCENTRO AUTOMOTIVO MAIS PRÓXIMO " + 
+                "\n\nDescrição: \n"+
+                "\nInforma sobre as CAPS (Centro Automotivo Porto Seguro) mais próximos conforme sua localização.\n"),
+                3:     
+                    
+                    ("\nACOMPANHAR DIAGNÓSTICO " + 
+                "\n\nDescrição: \n"+
+                "\nMostra o status de um diagnóstico já realizado anteriormente, para isso, precisa-se do código do diagnóstico fornecido, assim, informa sobre qual CAPS aguarda a chegada do cliente.\n"),
+                4: 
+                    ("\nFEEDBACK | FALE CONOSCO " + 
+                "\n\nDescrição: \n"+
+                "\nOpção que registra as opiniões e comentários dos usuários do aplicativo, sendo possível verificação do comentário registrado no site.\n")
+                }}
+
 def validacaoMatch(tamanho_max , numero_digitado):
     """
     Função para verificar se algum número está dentro das opções de um Match definido por algarismos em ordem crescente,
@@ -119,6 +144,7 @@ def separaString(palavra):
         palavra_separada = palavra_separada + letra + " "
     return palavra_separada
 
+
 def funcaoConsultarServicos():
     '''
     Procedimento de consulta dos serviços disponíveis com uma breve descrição de suas funções.
@@ -135,25 +161,31 @@ def funcaoConsultarServicos():
 
     consulta_menu = int(input("\nDigite o número que você quer mais detalhes: "))
     consulta_menu = validacaoMatch(4, consulta_menu)
-    match consulta_menu: 
-        case 1:
-            print("\nDIAGNÓSTICO " + 
-                "\n\nDescrição: \n"+
-                "\nRealiza o diagnóstico do problema do automóvel através do código de falha, "+
-                "podendo ser fornecido diretamente ou diagnosticado conforme responda aos campos do decorrer das solicitações do programa. " + 
-                "Após esse processo, o programa envia para a CAPS mais qualificada sobre o diagnóstico e agendando a visita futura, mostrando o código de falha, CAPS que irá realizar o atendimento e o Código de Diagnóstico.\n")
-        case 2: 
-            print("\nCENTRO AUTOMOTIVO MAIS PRÓXIMO " + 
-                "\n\nDescrição: \n"+
-                "\nInforma sobre as CAPS (Centro Automotivo Porto Seguro) mais próximos conforme sua localização.\n")
-        case 3:
-            print("\nACOMPANHAR DIAGNÓSTICO " + 
-                "\n\nDescrição: \n"+
-                "\nMostra o status de um diagnóstico já realizado anteriormente, para isso, precisa-se do código do diagnóstico fornecido, assim, informa sobre qual CAPS aguarda a chegada do cliente.\n")
-        case 4: 
-            print("\nFEEDBACK | FALE CONOSCO " + 
-                "\n\nDescrição: \n"+
-                "\nOpção que registra as opiniões e comentários dos usuários do aplicativo, sendo possível verificação do comentário registrado no site.\n")
+    
+    #dicionario que substitui o match case
+
+    print(dicionario_infos["consulta"][consulta_menu])
+    
+    # match consulta_menu:
+         
+        # case 1:
+        #     print("\nDIAGNÓSTICO " + 
+        #         "\n\nDescrição: \n"+
+        #         "\nRealiza o diagnóstico do problema do automóvel através do código de falha, "+
+        #         "podendo ser fornecido diretamente ou diagnosticado conforme responda aos campos do decorrer das solicitações do programa. " + 
+        #         "Após esse processo, o programa envia para a CAPS mais qualificada sobre o diagnóstico e agendando a visita futura, mostrando o código de falha, CAPS que irá realizar o atendimento e o Código de Diagnóstico.\n")
+        # case 2: 
+        #     print("\nCENTRO AUTOMOTIVO MAIS PRÓXIMO " + 
+        #         "\n\nDescrição: \n"+
+        #         "\nInforma sobre as CAPS (Centro Automotivo Porto Seguro) mais próximos conforme sua localização.\n")
+        # case 3:
+        #     print("\nACOMPANHAR DIAGNÓSTICO " + 
+        #         "\n\nDescrição: \n"+
+        #         "\nMostra o status de um diagnóstico já realizado anteriormente, para isso, precisa-se do código do diagnóstico fornecido, assim, informa sobre qual CAPS aguarda a chegada do cliente.\n")
+        # case 4: 
+        #     print("\nFEEDBACK | FALE CONOSCO " + 
+        #         "\n\nDescrição: \n"+
+        #         "\nOpção que registra as opiniões e comentários dos usuários do aplicativo, sendo possível verificação do comentário registrado no site.\n")
 
 def funcaoAdquirirServico():
     '''
@@ -438,7 +470,8 @@ def funcaoFaleConosco():
             print("\nPara mais informações:")
             print("\nEntre em contato em: https://centrosautomotivosportoseguro.campanhaporto.com.br\n")
 
-while True:
+#main
+while True:   
             
     print("Bem vindo ao serviço de diagnóstico automotivo digital da Porto-Seguro! \n")
     
