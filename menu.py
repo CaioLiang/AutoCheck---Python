@@ -1,5 +1,5 @@
 #AUTOCHECK NOTAS:
-#Criar um dicionario para os clientes
+#Criar um dicionario para os clientes"
 
 dicionario_infos = {"consulta": {
                 1: 
@@ -191,7 +191,7 @@ def funcaoAdquirirServico():
     '''
     Procedimento de adquirir um serviço da AutoCheck, na qual proporciona: Diagnóstico, Centro Automotivo mais próximo e Acompanhar diagnóstico.
     '''
-    print("\nOlá, esses são serviços do Centro Automotivo Porto Seguro: \n")
+    print("\nOlá, esses são os serviços do Centro Automotivo Porto Seguro: \n")
     print("╔════════════════════════════════════════╗")
     print("║            **SERVIÇOS**                ║")
     print("║                                        ║")
@@ -248,7 +248,9 @@ def funcaoAdquirirServico():
                     print("║ 1 - Elétrica                           ║")
                     print("║ 2 - Mecânica                           ║")     
                     print("╚════════════════════════════════════════╝  \n")
-
+                    
+                    
+                        
                     area_afetada = int(input("Digite um das opções : "))
                     area_afetada = validacaoMatch(2, area_afetada)
                     
@@ -263,6 +265,25 @@ def funcaoAdquirirServico():
                     conhecimento_causa = int(input("Digite uma das opções: ") )
                     conhecimento_causa = validacaoMatch(2, conhecimento_causa)
                     if(conhecimento_causa == 1):
+                        
+                        #implementar biblioteca PANDAS
+                        dict_cod_falha = {
+                        #"cod_falha": ("descrição tecnica", valor estimado)
+                        "C0800": ("Tensao Bateria Tensão da bateria", 340.00),   
+                        "P0645": ("ArCondicionado Ar Condicionado", 998.30),                                  
+                        "P0087": ("PressaoSistema Pressão do sistema", 256.90),                                   
+                        "P0300": ("FalhaIgnicao Falha de ignição", 40.00),                                   
+                        "P0418": ("Rele Bomba Ar Rele da bomba de ar", 49.80),                                                            
+                        "P0650": ("Mau funcionamentodocircuitode controle daluz", 340.00),   
+                        "P1712": ("SensVelocRodaDD Sensor de velocidade da roda dianteira direita", 134.44),
+                        "P0217": ("TemperaturaMotor Temperatura do motor", 70.41),
+                        "P0263": (" Cilindro1– Falhade balanceamento", 100.13),
+                        "C0238": ("SensVelocidRoda Sensor de velocidade da roda", 200.39),
+                        "P0805": ("Mau funcionamentodocircuitodosensorde posiçãodaembreagem", 120.85),
+                        "P0381": ("Mau funcionamentodocircuitoindicadordasvelasaquecedora", 278.24),                              
+                        "Em análise": ("Em análise", 0.00)
+                        }
+                        
                         match area_afetada:
                             case 1:
                                 print("\nEntre as possiveis falhas estão: \n")  
@@ -279,54 +300,55 @@ def funcaoAdquirirServico():
                                 print("║ 8 - Outros                                 ║")    
                                 print("╚════════════════════════════════════════════╝  \n")
                                 
-
+                                
                                 falha_eletrica = int(input("Digite um número do menu: "))
                                 falha_eletrica = validacaoMatch(8, falha_eletrica)     
                                 match falha_eletrica:
-                                    case 1:
-                                        descricao_codfalha = "Tensao Bateria Tensão da bateria"
+                                    case 1:                                     
+                                        # descricao_codfalha = "Tensao Bateria Tensão da bateria"
                                         cod_falha = "C0800"
-                                        orcamento_previo = 340.00                                       
+                                        # orcamento_previo = 340.00  
                                     case 2:
-                                        descricao_codfalha = "ArCondicionado Ar Condicionado"
+                                        # descricao_codfalha = "ArCondicionado Ar Condicionado"
                                         cod_falha = "P0645"
-                                        orcamento_previo = 998.30
+                                        # orcamento_previo = 998.30
                                     case 3:
-                                        descricao_codfalha = "PressaoSistema Pressão do sistema"
+                                        # descricao_codfalha = "PressaoSistema Pressão do sistema"
                                         cod_falha = "P0087" 
-                                        orcamento_previo = 256.90
+                                        # orcamento_previo = 256.90
                                     case 4:
-                                        descricao_codfalha = "FalhaIgnicao Falha de ignição"
+                                        # descricao_codfalha = "FalhaIgnicao Falha de ignição"
                                         cod_falha = "P0300"
-                                        orcamento_previo = 40.00
+                                        # orcamento_previo = 40.00
                                     case 5:
-                                        descricao_codfalha = "Rele Bomba Ar Rele da bomba de ar"
+                                        # descricao_codfalha = "Rele Bomba Ar Rele da bomba de ar"
                                         cod_falha = "P0418"
-                                        orcamento_previo = 133.00
+                                        # orcamento_previo = 133.00
                                     case 6:
-                                        descricao_codfalha = "Mau funcionamentodocircuitode controle daluz"
+                                        # descricao_codfalha = "Mau funcionamentodocircuitode controle daluz"
                                         cod_falha = "P0650"
-                                        orcamento_previo = 49.80
+                                        # orcamento_previo = 49.80
                                     case 7:
-                                        descricao_codfalha = "Alternador Alternador"
+                                        # descricao_codfalha = "Alternador Alternador"
                                         cod_falha = "P0620"
-                                        orcamento_previo = 580.00
+                                        # orcamento_previo = 580.00
                                     case 8:
-                                        descricao_codfalha = "Em análise"
-                                        orcamento_previo = "Em análise"
+                                        # descricao_codfalha = "Em análise"
+                                        # orcamento_previo = "Em análise"
                                         cod_falha = "Em análise"
                     
                                 print("\nSucesso, seu diagnóstico foi encaminho para : CENTRO AUTOMOTIVO - BELA VISTA - RUA PEDROSO. Entraremos em contato em breve! \n") 
                                 print(f"Código de Falha: {cod_falha}")
-                                print(f"Descrição da falha: {descricao_codfalha}")
-                                print("Orçamento prévio: R$: {:.2f}".format(orcamento_previo))
+                                print(f"Descrição da falha: {dict_cod_falha[cod_falha][0]}")
+                                print("Orçamento prévio: R$: {:.2f}".format(float(dict_cod_falha[cod_falha][1])))
                                 cod_diagnostico = geraCodDiagnostico()
                                 print(f"Código do Diagnóstico: {cod_diagnostico}\n")
+                            
                             case 2: 
                                 
                                 print("\nEntre as possiveis falhas estão: \n")  
                                 print("╔════════════════════════════════════════════╗")
-                                print("║        **POSSÍVEL FALHA MECÂNICA**         ║")
+                                print("║        **POSSÍVEIS FALHA MECÂNICA**        ║")
                                 print("║                                            ║")
                                 print("║ 1 - Alinhamento                            ║")
                                 print("║ 2 - Arrefecimento                          ║")
@@ -343,38 +365,38 @@ def funcaoAdquirirServico():
                 
                                 match falha_mecanica_convertido:
                                     case 1:
-                                        descricao_codfalha = "SensVelocRodaDD Sensor de velocidade da roda dianteira direita"
+                                        # descricao_codfalha = "SensVelocRodaDD Sensor de velocidade da roda dianteira direita"
                                         cod_falha = "P1712"
-                                        orcamento_previo = 134.44                                       
+                                        # orcamento_previo = 134.44                                       
                                     case 2:
-                                        descricao_codfalha = "TemperaturaMotor Temperatura do motor"
+                                        # descricao_codfalha = "TemperaturaMotor Temperatura do motor"
                                         cod_falha = "P0217"
-                                        orcamento_previo = 70.14 
+                                        # orcamento_previo = 70.14 
                                     case 3:
-                                        descricao_codfalha = "Cilindro1– Falhade balanceamento "
+                                        # descricao_codfalha = "Cilindro1– Falhade balanceamento "
                                         cod_falha = "P0263" 
-                                        orcamento_previo = 100.13 
+                                        # orcamento_previo = 100.13 
                                     case 4:
-                                        descricao_codfalha = "SensVelocidRoda Sensor de velocidade da roda"
+                                        # descricao_codfalha = "SensVelocidRoda Sensor de velocidade da roda"
                                         cod_falha = "C0238"
-                                        orcamento_previo = 200.39 
+                                        # orcamento_previo = 200.39 
                                     case 5:
-                                        descricao_codfalha = "Mau funcionamentodocircuitodosensorde posiçãodaembreagem"
+                                        # descricao_codfalha = "Mau funcionamentodocircuitodosensorde posiçãodaembreagem"
                                         cod_falha = "P0805"
-                                        orcamento_previo = 120.85 
+                                        # orcamento_previo = 120.85 
                                     case 6:
-                                        descricao_codfalha = "Mau funcionamentodocircuitoindicadordasvelasaquecedora"
+                                        # descricao_codfalha = "Mau funcionamentodocircuitoindicadordasvelasaquecedora"
                                         cod_falha = "P0381"
-                                        orcamento_previo = 278.24 
+                                        # orcamento_previo = 278.24 
                                     case 7:
-                                        descricao_codfalha = "Em análise"
+                                        # descricao_codfalha = "Em análise"
                                         cod_falha = "Em análise"
-                                        orcamento_previo = 0 
+                                        # orcamento_previo = 0 
 
                                 print("\nSucesso, seu diagnóstico foi encaminhado para : CENTRO AUTOMOTIVO - BELA VISTA - RUA PEDROSO. Entraremos em contato em breve! \n")
                                 print(f"Código de Falha: {cod_falha}")
-                                print(f"Descrição da falha: {descricao_codfalha}")
-                                print("Orçamento prévio: R$: {:.2f}".format(orcamento_previo))
+                                print(f"Descrição da falha: {dict_cod_falha[cod_falha][0]}")
+                                print("Orçamento prévio: R$: {:.2f}".format(float(dict_cod_falha[cod_falha][1])))
                                 cod_diagnostico = geraCodDiagnostico()
                                 print(f"Código do Diagnóstico: {cod_diagnostico}\n")
                     else:
