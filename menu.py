@@ -1,18 +1,15 @@
-#AUTOCHECK NOTAS:
-#Criar um dicionario para os clientes"
-# Futura implementação: Tela de Login | id usuario
-# dict_clientes = {id : ("cod_diagnostico"), ...}
-
-lista_id = [0, 1]
-lista_nomes = ["csdasdsads", "asdasdasd"]
-
-
-def cadastrarCliente ( id, nome, dict_clientes):
+def cadastrarCliente (id, nome, dict_clientes, lista_id, lista_nomes):
     dict_clientes[nome] = {id : ()}
+    lista_id = lista_id.append(id)
+    lista_nomes = lista_nomes.append(nome)
 
-def cadastrarCodDiagnostico ( id, nome, dict_clientes):
-    dict_clientes[nome] = {id : ()}
-
+def cadastrarCodDiagnostico (id, nome, cod_diagnostico, dict_clientes):
+    if user in dict_clientes.keys():
+        lista_key = list(dict_clientes[nome].keys())
+        id = lista_key[0]
+    #integração no formato {asda : asdasd:{adasd}}
+    lista_cod_diagnostico_atual = (dict_clientes[nome][id])
+    dict_clientes[nome][id] = lista_cod_diagnostico_atual + (cod_diagnostico, ) 
 
 dicionario_infos = {"consulta": {
                 1: 
@@ -157,9 +154,6 @@ def separaString(palavra):
         palavra_separada = palavra_separada + letra + " "
     return palavra_separada
 
-
-
-
 #SISTEMA
 
 def funcaoTelaLogin():
@@ -181,20 +175,19 @@ def funcaoTelaLogin():
             #validar
             if user in dict_clientes.keys():
                 print("Login realizado com sucesso!")
-                break
+                return user
             print(f"Usuário: {user}. Não cadastrado!. Tente novamente!")        
     else:
-        user = input("Digite nome do seu usuario: ")
         #validar
+        user = input("Digite nome do seu usuario: ")
         while True:
             if user in dict_clientes.keys():
                 print("Usuário já possui cadastro!")
             else:       
-                
-                cadastrarCliente((len(lista_id)+1) ,  )
-                break       
-        
- 
+                cadastrarCliente((len(lista_id)), user, dict_clientes, lista_id, lista_nomes)
+                return user       
+            user = input("Digite nome do seu usuario: ")
+
 def funcaoConsultarServicos():
     '''
     Procedimento de consulta dos serviços disponíveis com uma breve descrição de suas funções.
@@ -237,7 +230,7 @@ def funcaoConsultarServicos():
         #         "\n\nDescrição: \n"+
         #         "\nOpção que registra as opiniões e comentários dos usuários do aplicativo, sendo possível verificação do comentário registrado no site.\n")
 
-def funcaoAdquirirServico():
+def funcaoAdquirirServico(user):
     '''
     Procedimento de adquirir um serviço da AutoCheck, na qual proporciona: Diagnóstico, Centro Automotivo mais próximo e Acompanhar diagnóstico.
     '''
@@ -457,7 +450,7 @@ def funcaoAdquirirServico():
                         print(f"Código do Diagnóstico: {cod_diagnostico}\n")                
 
                     #adicionando cliente no dicionario - dict_clientes 
-                    adicionarCliente(id+1, cod_diagnostico, dict_clientes)
+                    cadastrarCodDiagnostico(len(lista_id), user, cod_diagnostico, dict_clientes)  
         
         
         
@@ -550,33 +543,22 @@ def funcaoFaleConosco():
             print("\nPara mais informações:")
             print("\nEntre em contato em: https://centrosautomotivosportoseguro.campanhaporto.com.br\n")
 
+lista_id = [0, 1, 2, 3]
+lista_nomes = ["admin", "allan.brito", "caio.liang", "levi.magni"]
 
+dict_clientes = dict(zip(lista_nomes , lista_id))
 
-# retorno padrao:
-# print("\nSucesso, seu diagnóstico foi encaminho para : CENTRO AUTOMOTIVO - BELA VISTA - RUA PEDROSO. Entraremos em contato em breve! \n") 
-#                                 print(f"Código de Falha: {cod_falha}")
-#                                 print(f"Descrição da falha: {dict_cod_falha[cod_falha][0]}")
-#                                 print("Orçamento prévio: R$: {:.2f}".format(float(dict_cod_falha[cod_falha][1])))
-#                                 cod_diagnostico = geraCodDiagnostico()
-#                                 print(f"Código do Diagnóstico: {cod_diagnostico}\n")
-
-dict_clientes = {
-                # formato:
-                # "user" : {id :("cod_diagnostico")},
-                
-                "admin" : {0 : ("00000000")},
-                "allan.brito" : {1 : ("01010101010")}, 
-                "caio.liang" : {2 : ("01010101000")}, 
-                "levi.magni" : {3 : ("01010101011")},
-                 
-                 }
+#AUTOCHECK NOTAS:
+#Integração para o formato dict-dict
+#Dar opção de trocar de usuário
+#Criar CRUD
 
 #main
 while True:   
 
-    funcaoTelaLogin()
+    user = funcaoTelaLogin()
     
-    print("Bem vindo ao serviço de diagnóstico automotivo digital da Porto-Seguro! \n")
+    print("\nBem vindo ao serviço de diagnóstico automotivo digital da Porto-Seguro! \n")
     
     print("╔═════════════════════════════════╗")
     print("║ **Bem-vindo ao Menu Principal** ║")
@@ -592,9 +574,13 @@ while True:
         case 1:
             funcaoConsultarServicos()
         case 2:
-            funcaoAdquirirServico()        
+            funcaoAdquirirServico(user)        
         case 3:
             funcaoFaleConosco() 
         case 4:
             break
+print("\n", dict_clientes)
+print("\n", lista_nomes)
+print("\n", lista_id)
 print("\nObrigado, volte sempre!")
+#AUTOCHECK @2024
