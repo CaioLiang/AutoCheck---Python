@@ -3,14 +3,19 @@ def cadastrarCliente (id, nome, dict_clientes, lista_id, lista_nomes):
     lista_id = lista_id.append(id)
     lista_nomes = lista_nomes.append(nome)
 
-def cadastrarCodDiagnostico (id, nome, cod_diagnostico, dict_clientes):
+def cadastrarCodDiagnostico (id, user, cod_diagnostico, dict_clientes):
     if user in dict_clientes.keys():
-        lista_key = list(dict_clientes[nome].keys())
+        #identifica qual id do usuario
+        lista_key = list(dict_clientes[user].keys())
         id = lista_key[0]
     #integração no formato {asda : asdasd:{adasd}}
-    lista_cod_diagnostico_atual = (dict_clientes[nome][id])
-    dict_clientes[nome][id] = lista_cod_diagnostico_atual + (cod_diagnostico, ) 
-
+    lista_cod_diagnostico_atual = (dict_clientes[user][id])
+    print(lista_cod_diagnostico_atual)
+    print(cod_diagnostico)
+    print(dict_clientes)
+    dict_clientes[user][id] = lista_cod_diagnostico_atual + (cod_diagnostico, ) 
+    print(dict_clientes)
+    
 dicionario_infos = {"consulta": {
                 1: 
                     ("\nDIAGNÓSTICO " + 
@@ -163,7 +168,7 @@ def funcaoTelaLogin():
     print("║    **Bem-vindo à AutoCheck**    ║")
     print("║                                 ║")
     print("║ 1 - Login                       ║")
-    print("║ 2 - Criar conta                 ║")
+    print("║ 2 - Cadastrar conta             ║")
     print("╚═════════════════════════════════╝  \n")
     
     tela_login_menu = int(input("\nDigite um número do menu acima: "))
@@ -176,7 +181,12 @@ def funcaoTelaLogin():
             if user in dict_clientes.keys():
                 print("Login realizado com sucesso!")
                 return user
-            print(f"Usuário: {user}. Não cadastrado!. Tente novamente!")        
+            print(f"\nUsuário: {user}. Não cadastrado!. Tente novamente!\n")
+            resposta_cadastrar = input("Deseja cadastrar? ")        
+            if resposta_cadastrar == "sim":
+                print("Voltando a tela de cadastro....")
+                break
+                
     else:
         #validar
         user = input("Digite nome do seu usuario: ")
@@ -449,8 +459,8 @@ def funcaoAdquirirServico(user):
                         cod_diagnostico = geraCodDiagnostico()
                         print(f"Código do Diagnóstico: {cod_diagnostico}\n")                
 
-                    #adicionando cliente no dicionario - dict_clientes 
-                    cadastrarCodDiagnostico(len(lista_id), user, cod_diagnostico, dict_clientes)  
+            #adicionando cliente no dicionario - dict_clientes 
+            cadastrarCodDiagnostico(len(lista_id), user, cod_diagnostico, dict_clientes)  
         
         
         
@@ -548,6 +558,11 @@ lista_nomes = ["admin", "allan.brito", "caio.liang", "levi.magni"]
 
 dict_clientes = dict(zip(lista_nomes , lista_id))
 
+for  users in dict_clientes.keys():
+    dict_clientes[users] = {lista_nomes.index(users): ()}
+
+print(dict_clientes)
+
 #AUTOCHECK NOTAS:
 #Integração para o formato dict-dict
 #Dar opção de trocar de usuário
@@ -579,6 +594,11 @@ while True:
             funcaoFaleConosco() 
         case 4:
             break
+        
+    print("\n", dict_clientes)
+    print("\n", lista_nomes)
+    print("\n", lista_id)
+
 print("\n", dict_clientes)
 print("\n", lista_nomes)
 print("\n", lista_id)
