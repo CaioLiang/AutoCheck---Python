@@ -175,7 +175,9 @@ def funcaoTelaLogin():
     tela_login_menu = validacaoMatch(2, tela_login_menu)
     
     if tela_login_menu == 1: 
-        while True:
+        lista_variantes_sim = ["Sim", "SIM", "sim", "sIm"]
+        Looping = True
+        while Looping:
             user = input("Digite nome do seu usuario: ")
             #validar
             if user in dict_clientes.keys():
@@ -183,20 +185,22 @@ def funcaoTelaLogin():
                 return user
             print(f"\nUsuário: {user}. Não cadastrado!. Tente novamente!\n")
             resposta_cadastrar = input("Deseja cadastrar? ")        
-            if resposta_cadastrar == "sim":
-                print("Voltando a tela de cadastro....")
-                break
-                
-    else:
-        #validar
+            
+            if resposta_cadastrar in lista_variantes_sim:
+                print(f"\nRegistrando '{user}' no cadastro....\n")
+                Looping = False
+    
+    #validar
+    if resposta_cadastrar not in lista_variantes_sim: 
         user = input("Digite nome do seu usuario: ")
-        while True:
-            if user in dict_clientes.keys():
-                print("Usuário já possui cadastro!")
-            else:       
-                cadastrarCliente((len(lista_id)), user, dict_clientes, lista_id, lista_nomes)
-                return user       
-            user = input("Digite nome do seu usuario: ")
+    
+    while True:
+        if user in dict_clientes.keys():
+            print("Usuário já possui cadastro!")
+        else:       
+            cadastrarCliente((len(lista_id)), user, dict_clientes, lista_id, lista_nomes)
+            return user       
+        user = input("Digite nome do seu usuario: ")
 
 def funcaoConsultarServicos():
     '''
@@ -553,8 +557,8 @@ def funcaoFaleConosco():
             print("\nPara mais informações:")
             print("\nEntre em contato em: https://centrosautomotivosportoseguro.campanhaporto.com.br\n")
 
-lista_id = [0, 1, 2, 3]
-lista_nomes = ["admin", "allan.brito", "caio.liang", "levi.magni"]
+lista_id = [0, 1, 2, 3, 4]
+lista_nomes = ["admin", "allan.brito", "caio.liang", "levi.magni", "kaique.oliveira"]
 
 dict_clientes = dict(zip(lista_nomes , lista_id))
 
