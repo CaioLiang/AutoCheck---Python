@@ -258,7 +258,7 @@ def funcaoConsultarServicos():
         #         "\n\nDescrição: \n"+
         #         "\nOpção que registra as opiniões e comentários dos usuários do aplicativo, sendo possível verificação do comentário registrado no site.\n")
 
-def funcaoAdquirirServico(user):
+def funcaoAdquirirServico(user, lista_id, dict_clientes):
     '''
     Procedimento de adquirir um serviço da AutoCheck, na qual proporciona: Diagnóstico, Centro Automotivo mais próximo e Acompanhar diagnóstico.
     '''

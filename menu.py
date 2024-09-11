@@ -19,7 +19,7 @@ user = funcaoTelaLogin(dict_clientes, lista_id, lista_nomes)
 
 while True:   
   
-    print("\nBem vindo ao serviço de diagnóstico automotivo digital da Porto-Seguro! \n")
+    print(f"\n{user}, Seja bem-vindo ao serviço de diagnóstico automotivo digital da Porto-Seguro! \n")
     
     print("╔═════════════════════════════════╗")
     print("║ **Bem-vindo ao Menu Principal** ║")
@@ -35,7 +35,7 @@ while True:
         case 1:
             funcaoConsultarServicos()
         case 2:
-            funcaoAdquirirServico(user)        
+            funcaoAdquirirServico(user, lista_id, dict_clientes)        
         case 3:
             funcaoFaleConosco() 
         case 4:
