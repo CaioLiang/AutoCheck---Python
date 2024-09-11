@@ -1,8 +1,8 @@
 from biblioteca import *
 
 #AUTOCHECK NOTAS:
-#Implementar TRY EXECPT
 #Criar CRUD
+#Documentar as novas funções
 #Saida de dados em JSON
 
 
@@ -28,8 +28,10 @@ while True:
     print("║ 2 - Quero adquirir serviço      ║")
     print("║ 3 - Fale conosco                ║")
     print("║ 4 - Sair                        ║")
-    print("╚═════════════════════════════════╝  \n")
-    menu_principal = int(input("O que você quer fazer? Digite um número do menu: "))
+    print("╚═════════════════════════════════╝")
+    
+    menu_principal = tryExceptInputMenu("\nO que você quer fazer? Digite um número do menu: ")
+    
     menu_principal = validacaoMatch(4, menu_principal)
     match menu_principal:
         case 1:
@@ -42,7 +44,8 @@ while True:
             break
     
     manterLogin(user, dict_clientes, lista_id, lista_nomes)
-           
+    
+    #DEV       
     print("\n", dict_clientes)
     print("\n", lista_nomes)
     print("\n", lista_id)

@@ -1,3 +1,14 @@
+#ADICIONAIS
+
+def tryExceptInputMenu(label):
+    while True:
+        try:
+            opcao_menu = int(input(f"{label}"))
+            break
+        except ValueError as error:
+            print(f"\nValor Inválido! '{error}' não faz parte de uma das opções.")
+    return opcao_menu
+
 def cadastrarCliente (id, nome, dict_clientes, lista_id, lista_nomes):
     dict_clientes[nome] = {id : ()}
     lista_id = lista_id.append(id)
@@ -53,7 +64,9 @@ def validacaoMatch(tamanho_max , numero_digitado):
             break
         else: 
             print(f"A opção digitada: '{numero_digitado}' não é uma das opções. Possiveis opções : {lista_tam}")
-        numero_digitado = int(input("Digite uma opção: "))    
+        numero_digitado = tryExceptInputMenu("\nDigite uma opção: ")
+        # numero_digitado = int(input("Digite uma opção: "))
+            
     return numero_digitado
      
 def geraCodDiagnostico():
@@ -95,7 +108,7 @@ def validaAno(automovel_ano):
             break
         print(f"\nAno '{automovel_ano}' não é válido!\n"+
         "As datas devem estar no intervalo de 1885-2024.")
-        automovel_ano = int(input("Digite novamente o ano do automóvel: "))
+        automovel_ano = tryExceptInputMenu("Digite novamente o ano do automóvel: ")
     return automovel_ano
 
 def validaMinCaracteres(texto, quantidade_min, texto_pergunta):
@@ -159,7 +172,7 @@ def manterLogin(user, dict_clientes, lista_id, lista_nomes):
     """
     """
     lista_variantes_sim = ["Sim", "SIM", "sim", "sIm"]
-    decisao_login = input(f"Quer manter logado com a conta:'{user}'? ")
+    decisao_login = str(input(f"Quer manter logado com a conta:'{user}'? "))
     if decisao_login in lista_variantes_sim: 
         return user
     return funcaoTelaLogin(dict_clientes, lista_id, lista_nomes)
@@ -183,8 +196,8 @@ def funcaoTelaLogin(dict_clientes, lista_id, lista_nomes ):
     print("║ 1 - Login                       ║")
     print("║ 2 - Cadastrar conta             ║")
     print("╚═════════════════════════════════╝  \n")
-    
-    tela_login_menu = int(input("\nDigite um número do menu acima: "))
+           
+    tela_login_menu = tryExceptInputMenu("\nDigite um número do menu acima: ")  
     tela_login_menu = validacaoMatch(2, tela_login_menu)
     resposta_cadastrar = ""
     lista_variantes_sim = ["Sim", "SIM", "sim", "sIm", "SIm"]
@@ -192,21 +205,21 @@ def funcaoTelaLogin(dict_clientes, lista_id, lista_nomes ):
     if tela_login_menu == 1: 
         Looping = True
         while Looping:
-            user = input("Digite nome do seu usuario: ")
-            #validar
+            user = str(input("Digite nome do seu usuario: "))
+            user = validaMinCaracteres(user, 6, "Digite nome do seu usuario: ")
             if user in dict_clientes.keys():
                 print("Login realizado com sucesso!")
                 return user
-            print(f"\nUsuário: {user}. Não cadastrado!. Tente novamente!\n")
-            resposta_cadastrar = input("Deseja cadastrar? ")        
+            print(f"\nUsuário: {user}. Não cadastrado!\n")
+            resposta_cadastrar = str(input(("Deseja cadastrar? ")))
             
             if resposta_cadastrar in lista_variantes_sim:
                 print(f"\nRegistrando '{user}' no cadastro....\n")
                 Looping = False
     
-    #validar
     if resposta_cadastrar not in lista_variantes_sim: 
-        user = input("Digite nome do seu usuario: ")
+        user = str(input("Digite nome do seu usuario: "))
+        user = validaMinCaracteres(user, 6, "Digite nome do seu usuario: ")
     
     while True:
         if user in dict_clientes.keys():
@@ -214,7 +227,7 @@ def funcaoTelaLogin(dict_clientes, lista_id, lista_nomes ):
         else:       
             cadastrarCliente((len(lista_id)), user, dict_clientes, lista_id, lista_nomes)
             return user       
-        user = input("Digite nome do seu usuario: ")
+        user = str(input("Digite nome do seu usuario: "))
 
 def funcaoConsultarServicos():
     '''
@@ -230,7 +243,7 @@ def funcaoConsultarServicos():
     print("║ 4 - Feedback | Fale conosco            ║")     
     print("╚════════════════════════════════════════╝  \n")
 
-    consulta_menu = int(input("\nDigite o número que você quer mais detalhes: "))
+    consulta_menu = tryExceptInputMenu("\nDigite o número que você quer mais detalhes: ")
     consulta_menu = validacaoMatch(4, consulta_menu)
     
     #dicionario que substitui o match case
@@ -271,19 +284,19 @@ def funcaoAdquirirServico(user, lista_id, dict_clientes):
     print("║ 3 - Acompanhar diagnóstico             ║")     
     print("╚════════════════════════════════════════╝  \n")
     
-    servico_menu = int(input("\nDigite uma das opções: "))
+    servico_menu = tryExceptInputMenu("\nDigite uma das opções: ")
     servico_menu = validacaoMatch(3, servico_menu)
     match servico_menu: 
         case 1:
             print("\nEntendo, preciso de mais informações do seu automóvel: \n" +
             "Preencha os seguintes campos: \n")
-            automovel_ano = int(input("Ano: "))
+            automovel_ano = tryExceptInputMenu("Ano: ")
             automovel_ano = validaAno(automovel_ano)
-            automovel_montadora = input("Montadora: ")
+            automovel_montadora = str(input("Montadora: "))
             automovel_montadora = validaMinCaracteres(automovel_montadora, 3, "Montadora: ")
-            automovel_modelo = input("Modelo: ")
+            automovel_modelo = str(input("Modelo: "))
             automovel_modelo = validaMinCaracteres(automovel_modelo, 3, "Modelo: ")
-            automovel_motor = input("Motor: ")
+            automovel_motor = str(input("Motor: "))
             automovel_motor = validaMinCaracteres(automovel_motor, 7, "Motor: ")
             print("\n\nSobre o código de falha: \n")
             print("╔════════════════════════════════════════╗")
@@ -294,13 +307,13 @@ def funcaoAdquirirServico(user, lista_id, dict_clientes):
             print("╚════════════════════════════════════════╝  \n")
 
 
-            diagnostico_codigo_falha = int(input("\nDigite uma das opções: "))
+            diagnostico_codigo_falha = tryExceptInputMenu("\nDigite uma das opções: ")
             diagnostico_codigo_falha = validacaoMatch(2, diagnostico_codigo_falha)
             match diagnostico_codigo_falha: 
                 case 1: 
-                    cod_falha_usuario = input("Digite o código de falha: ")
+                    cod_falha_usuario = str(input("Digite o código de falha: "))
                     cod_falha_usuario = validaCodFalha(cod_falha_usuario)
-                    sintomas_automovel = input("Entendo, descreve o problema do seu automóvel: ") 
+                    sintomas_automovel = str(input("Entendo, descreve o problema do seu automóvel: "))
                     sintomas_automovel = validaMinCaracteres(sintomas_automovel, 10, "Entendo, descreve o problema do seu automóvel: ")
                     print("\nSucesso, seu diagnóstico foi encaminhado para : CENTRO AUTOMOTIVO - BELA VISTA - RUA PEDROSO. Entraremos em contato em breve! \n")
                     print(f"Código de Falha: {cod_falha_usuario}")
@@ -309,7 +322,7 @@ def funcaoAdquirirServico(user, lista_id, dict_clientes):
                     cod_diagnostico = geraCodDiagnostico()
                     print(f"Código do Diagnóstico: {cod_diagnostico}\n")
                 case 2:
-                    sintomas_automovel = input("Entendo, descreve o problema do seu automóvel: ") 
+                    sintomas_automovel = str(input("Entendo, descreve o problema do seu automóvel: "))
                     sintomas_automovel = validaMinCaracteres(sintomas_automovel, 10, "Entendo, descreve o problema do seu automóvel: ")
                     print("\nConforme seu relato sobre o estado do carro, \n" + 
                     "As possiveis áreas afetadas são: \n")
@@ -320,9 +333,8 @@ def funcaoAdquirirServico(user, lista_id, dict_clientes):
                     print("║ 2 - Mecânica                           ║")     
                     print("╚════════════════════════════════════════╝  \n")
                     
-                    
-                        
-                    area_afetada = int(input("Digite um das opções : "))
+
+                    area_afetada = tryExceptInputMenu("Digite um das opções : ")
                     area_afetada = validacaoMatch(2, area_afetada)
                     
                     print("\nPossui mais detalhes da causa do problema? \n")  
@@ -333,7 +345,7 @@ def funcaoAdquirirServico(user, lista_id, dict_clientes):
                     print("║ 2 - NÃO                                ║")     
                     print("╚════════════════════════════════════════╝  \n")
 
-                    conhecimento_causa = int(input("Digite uma das opções: ") )
+                    conhecimento_causa = tryExceptInputMenu("Digite uma das opções: ")
                     conhecimento_causa = validacaoMatch(2, conhecimento_causa)
                     if(conhecimento_causa == 1):
                         
@@ -372,7 +384,7 @@ def funcaoAdquirirServico(user, lista_id, dict_clientes):
                                 print("╚════════════════════════════════════════════╝  \n")
                                 
                                 
-                                falha_eletrica = int(input("Digite um número do menu: "))
+                                falha_eletrica = tryExceptInputMenu("Digite um número do menu: ")
                                 falha_eletrica = validacaoMatch(8, falha_eletrica)     
                                 match falha_eletrica:
                                     case 1:                                     
@@ -430,9 +442,8 @@ def funcaoAdquirirServico(user, lista_id, dict_clientes):
                                 print("║ 7 - Outros                                 ║")   
                                 print("╚════════════════════════════════════════════╝  \n")
 
-                                falha_mecanica = input("O que você quer fazer? Digite um número do menu: ")
-                                falha_mecanica_convertido = int(falha_mecanica)
-                                falha_mecanica_convertido = validacaoMatch(7, falha_mecanica_convertido)
+                                falha_mecanica = tryExceptInputMenu("O que você quer fazer? Digite um número do menu: ")
+                                falha_mecanica = validacaoMatch(7, falha_mecanica)
                 
                                 match falha_mecanica_convertido:
                                     case 1:
@@ -479,15 +490,11 @@ def funcaoAdquirirServico(user, lista_id, dict_clientes):
 
             #adicionando cliente no dicionario - dict_clientes 
             cadastrarCodDiagnostico(len(lista_id), user, cod_diagnostico, dict_clientes)  
-        
-        
-        
-        
-        
+           
         case 2:
 
             print("\nCentro Automotivo Porto Seguro mais próximo\n")
-            localizacao_atual = input("Informe a sua localização: ")
+            localizacao_atual = str(input("Informe a sua localização: "))
             localizacao_atual = validaMinCaracteres(localizacao_atual, 15, "Informe a sua localizacao: ")
             print(f"\nNo endereço {localizacao_atual}, os Centro Automotivo Porto Seguro mais próximos e disponiveis se encontram em: " +
                 "\n\n1 - Av. Inocêncio Seráfico, 1070 - Vila Silva Ribeiro, Carapicuíba - SP, 06380-021\n" +
@@ -495,7 +502,7 @@ def funcaoAdquirirServico(user, lista_id, dict_clientes):
                 "\n3 - Alameda Araguaia, 3600 - Tamboré, Barueri - SP, 06455-000 \n")            
         case 3:
             print("\nAcompanhamento de Diagnóstico \n")
-            cod_diagnostico = int(input("Digite seu código de diagnóstico: "))
+            cod_diagnostico = tryExceptInputMenu("Digite seu código de diagnóstico: ")
             cod_diagnostico = validaCodigoDiagnostico(cod_diagnostico)
             print(f"\nO Diagnóstico de código: '{cod_diagnostico}' está registrado na : CENTRO AUTOMOTIVO - BELA VISTA - RUA PEDROSO. Estamos no seu aguardo! \n") 
             print("Descrição da falha: Em análise")
@@ -515,7 +522,7 @@ def funcaoFaleConosco():
     print("║ 3 - Mais informações                       ║")   
     print("╚════════════════════════════════════════════╝  \n")  
 
-    fale_conosco = int(input("Selecione uma das opções: "))
+    fale_conosco = tryExceptInputMenu("Selecione uma das opções: ")
     fale_conosco = validacaoMatch(3, fale_conosco)
     match fale_conosco:
         case 1:
@@ -526,14 +533,14 @@ def funcaoFaleConosco():
             print("║ 2 - Reclamação                             ║")
             print("╚════════════════════════════════════════════╝  \n") 
 
-            fale_conosco_opiniao = int(input("Digite uma das opções: "))
+            fale_conosco_opiniao = tryExceptInputMenu("Digite uma das opções: ")
             fale_conosco_opiniao = validacaoMatch(2, fale_conosco_opiniao)
             match fale_conosco_opiniao:
                 case 1:
-                    opiniao_usuario_elogio = input("\nMuito obrigado pelo contato, escreva seu elogio: ")
+                    opiniao_usuario_elogio = str(input("\nMuito obrigado pelo contato, escreva seu elogio: "))
                     opiniao_usuario_elogio = validaMinCaracteres(opiniao_usuario_elogio, 5, "\nMuito obrigado pelo contato, escreva seu elogio: ")
                 case 2:
-                    opiniao_usuario_reclamacao = input("\nMuito obrigado pelo contato, escreva sua reclamação: ")
+                    opiniao_usuario_reclamacao = str(input("\nMuito obrigado pelo contato, escreva sua reclamação: "))
                     opiniao_usuario_reclamacao = validaMinCaracteres(opiniao_usuario_reclamacao, 5, "\nMuito obrigado pelo contato, escreva sua reclamação: ")
             print("\nSua opinião foi registrada! Entre no site para consultar sua opinião: " + 
                 "\nhttps://centrosautomotivosportoseguro.campanhaporto.com.br\n")
@@ -548,20 +555,20 @@ def funcaoFaleConosco():
             print("║ 4 - Outros                                   ║")
             print("╚══════════════════════════════════════════════╝  \n") 
                 
-            problema_aplicativo = int(input("\nDigite uma das opções: "))
+            problema_aplicativo = tryExceptInputMenu("\nDigite uma das opções: ")
             problema_aplicativo = validacaoMatch(4, problema_aplicativo)
             match problema_aplicativo:
                 case 1:
-                    problema_aplicativo_atendimento = input("\nLamentamos o ocorrido com o atendimento. Por favor, detalhe o problema: ")
+                    problema_aplicativo_atendimento = str(input("\nLamentamos o ocorrido com o atendimento. Por favor, detalhe o problema: "))
                     problema_aplicativo_atendimento = validaMinCaracteres(problema_aplicativo_atendimento, 5, "\nLamentamos o ocorrido com o atendimento. Por favor, detalhe o problema: ")
                 case 2:
-                    problema_aplicativo_diagnostico = input("\nLamentamos o ocorrido com o diagnóstico. Por favor, detalhe o problema: ")
+                    problema_aplicativo_diagnostico = str(input("\nLamentamos o ocorrido com o diagnóstico. Por favor, detalhe o problema: "))
                     problema_aplicativo_diagnostico = validaMinCaracteres(problema_aplicativo_diagnostico, 5, "\nLamentamos o ocorrido com o diagnóstico. Por favor, detalhe o problema: ")
                 case 3:
-                    problema_aplicativo_funcionalidade = input("\nLamentamos o ocorrido com as funcionalidades. Por favor, detalhe o problema: ")
+                    problema_aplicativo_funcionalidade = str(input("\nLamentamos o ocorrido com as funcionalidades. Por favor, detalhe o problema: "))
                     problema_aplicativo_funcionalidade = validaMinCaracteres(problema_aplicativo_funcionalidade, 5, "\nLamentamos o ocorrido com as funcionalidades. Por favor, detalhe o problema: ")
                 case 4:
-                    problema_aplicativo_outros = input("\nLamentamos o ocorrido. Por favor, detalhe o problema: ")
+                    problema_aplicativo_outros = str(input("\nLamentamos o ocorrido. Por favor, detalhe o problema: "))
                     problema_aplicativo_outros = validaMinCaracteres(problema_aplicativo_outros, 5, "\nLamentamos o ocorrido. Por favor, detalhe o problema: ")
 
             print("\nAgradecemos pelo contato! Sua opinião foi registrada! Entre no site para consultar sua opinião: " + 
