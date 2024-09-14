@@ -447,7 +447,7 @@ def funcaoAdquirirServico(user, lista_id, dict_clientes):
                                 falha_mecanica = tryExceptInputMenu("O que você quer fazer? Digite um número do menu: ")
                                 falha_mecanica = validacaoMatch(7, falha_mecanica)
                 
-                                match falha_mecanica_convertido:
+                                match falha_mecanica:
                                     case 1:
                                         # descricao_codfalha = "SensVelocRodaDD Sensor de velocidade da roda dianteira direita"
                                         cod_falha = "P1712"
