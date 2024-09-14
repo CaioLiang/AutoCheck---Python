@@ -205,8 +205,9 @@ def funcaoTelaLogin(dict_clientes, lista_id, lista_nomes ):
     if tela_login_menu == 1: 
         Looping = True
         while Looping:
-            user = str(input("Digite nome do seu usuario: "))
-            user = validaMinCaracteres(user, 6, "Digite nome do seu usuario: ")
+            user = str(input("Formato padrão : 'nome.sobrenome'\n"+ 
+                             "Digite nome do seu usuario: "))
+            user = validaMinCaracteres(user, 6,"Formato padrão : 'nome.sobrenome'\nDigite nome do seu usuario: ")
             if user in dict_clientes.keys():
                 print("Login realizado com sucesso!")
                 return user
@@ -218,8 +219,9 @@ def funcaoTelaLogin(dict_clientes, lista_id, lista_nomes ):
                 Looping = False
     
     if resposta_cadastrar not in lista_variantes_sim: 
-        user = str(input("Digite nome do seu usuario: "))
-        user = validaMinCaracteres(user, 6, "Digite nome do seu usuario: ")
+        user = str(input("Formato padrão : 'nome.sobrenome'\n"+ 
+                             "Digite nome do seu usuario: "))
+        user = validaMinCaracteres(user, 6, "Formato padrão : 'nome.sobrenome'\nDigite nome do seu usuario: ")
     
     while True:
         if user in dict_clientes.keys():
