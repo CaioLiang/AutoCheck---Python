@@ -237,7 +237,7 @@ def funcaoConsultarServicos():
     '''
     print("\nAtualmente as funcionalidades do aplicativo são: \n")
     print("╔════════════════════════════════════════╗")
-    print("║            **CONSULTA**                ║")
+    print("║            **INFORMAÇÕES**             ║")
     print("║                                        ║")
     print("║ 1 - Diagnóstico                        ║")
     print("║ 2 - Centro Automotivo mais próxima     ║")
