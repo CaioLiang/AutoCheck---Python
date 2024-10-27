@@ -13,9 +13,12 @@ lista_nomes = ["admin", "allan.brito", "caio.liang", "levi.magni", "kaique.olive
 
 dict_clientes = funcaoDictClientes(lista_id, lista_nomes)
 
+dict_codDiagnostico = {}
+
 #main
 
 user = funcaoTelaLogin(dict_clientes, lista_id, lista_nomes)
+
 
 while True:   
   
@@ -53,5 +56,7 @@ while True:
 print("\n", dict_clientes)
 print("\n", lista_nomes)
 print("\n", lista_id)
+
+
 print("\nObrigado, volte sempre!")
 #AUTOCHECK @2024

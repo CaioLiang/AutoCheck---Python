@@ -185,6 +185,23 @@ def funcaoDictClientes(lista_id, lista_nomes):
 
     return dict_clientes
 
+def exportarJson(dict_diagnostico): 
+    
+    print("Deseja exportar arquivo em JSON?\n" + 
+      "1 = SIM\n" + 
+      "2 = NÃO\n")
+
+    exportar = int(input("Digite uma das opcões: "))
+    validacaoMatch(2, exportar)
+    
+    if exportar == 1:
+        import json
+        
+        with open (f'codigo_diagonostico_{dict_diagnostico['cod_diagnostico']}.json', 'w', encoding='utf-8') as arquivo:
+            json.dump(dict_diagnostico, arquivo, indent=4)
+        
+        print("Diagnóstico exportado em JSON!\n")
+             
 #SISTEMA
 
 def funcaoTelaLogin(dict_clientes, lista_id, lista_nomes ):
@@ -251,27 +268,6 @@ def funcaoConsultarServicos():
     #dicionario que substitui o match case
 
     print(dicionario_infos["consulta"][consulta_menu])
-    
-    # match consulta_menu:
-         
-        # case 1:
-        #     print("\nDIAGNÓSTICO " + 
-        #         "\n\nDescrição: \n"+
-        #         "\nRealiza o diagnóstico do problema do automóvel através do código de falha, "+
-        #         "podendo ser fornecido diretamente ou diagnosticado conforme responda aos campos do decorrer das solicitações do programa. " + 
-        #         "Após esse processo, o programa envia para a CAPS mais qualificada sobre o diagnóstico e agendando a visita futura, mostrando o código de falha, CAPS que irá realizar o atendimento e o Código de Diagnóstico.\n")
-        # case 2: 
-        #     print("\nCENTRO AUTOMOTIVO MAIS PRÓXIMO " + 
-        #         "\n\nDescrição: \n"+
-        #         "\nInforma sobre as CAPS (Centro Automotivo Porto Seguro) mais próximos conforme sua localização.\n")
-        # case 3:
-        #     print("\nACOMPANHAR DIAGNÓSTICO " + 
-        #         "\n\nDescrição: \n"+
-        #         "\nMostra o status de um diagnóstico já realizado anteriormente, para isso, precisa-se do código do diagnóstico fornecido, assim, informa sobre qual CAPS aguarda a chegada do cliente.\n")
-        # case 4: 
-        #     print("\nFEEDBACK | FALE CONOSCO " + 
-        #         "\n\nDescrição: \n"+
-        #         "\nOpção que registra as opiniões e comentários dos usuários do aplicativo, sendo possível verificação do comentário registrado no site.\n")
 
 def funcaoAdquirirServico(user, lista_id, dict_clientes):
     '''
@@ -323,6 +319,27 @@ def funcaoAdquirirServico(user, lista_id, dict_clientes):
                     print("Orçamento prévio: Em análise")
                     cod_diagnostico = geraCodDiagnostico()
                     print(f"Código do Diagnóstico: {cod_diagnostico}\n")
+                    
+                    #SPRINT4
+                    dict_diagnostico =  {
+                                    
+                        'automovel_dados' : 
+                            {
+                            'automovel_ano': automovel_ano,
+                            'automovel_montadora': automovel_montadora,
+                            'automovel_modelo': automovel_modelo,
+                            'automovel_motor': automovel_motor            
+                            },
+                        'sintomas_automovel': sintomas_automovel,
+                        'cod_diagnostico' : cod_diagnostico,
+                        'cod_falha' : cod_falha_usuario,
+                        'desc_falha' : 'Em análise',
+                        'orca_previo' : 'Em análise',
+                                    
+                        }
+                                
+                    exportarJson(dict_diagnostico)
+                    
                 case 2:
                     sintomas_automovel = str(input("Entendo, descreve o problema do seu automóvel: "))
                     sintomas_automovel = validaMinCaracteres(sintomas_automovel, 10, "Entendo, descreve o problema do seu automóvel: ")
@@ -422,12 +439,34 @@ def funcaoAdquirirServico(user, lista_id, dict_clientes):
                                         # orcamento_previo = "Em análise"
                                         cod_falha = "Em análise"
                     
-                                print("\nSucesso, seu diagnóstico foi encaminho para : CENTRO AUTOMOTIVO - BELA VISTA - RUA PEDROSO. Entraremos em contato em breve! \n") 
+                                print("\nSucesso, seu diagnóstico foi encaminhado para : CENTRO AUTOMOTIVO - BELA VISTA - RUA PEDROSO. Entraremos em contato em breve! \n") 
                                 print(f"Código de Falha: {cod_falha}")
                                 print(f"Descrição da falha: {dict_cod_falha[cod_falha][0]}")
                                 print("Orçamento prévio: R$: {:.2f}".format(float(dict_cod_falha[cod_falha][1])))
                                 cod_diagnostico = geraCodDiagnostico()
                                 print(f"Código do Diagnóstico: {cod_diagnostico}\n")
+                                
+                                #SPRINT4
+                                dict_diagnostico =  {
+                                    
+                                    'automovel_dados' : 
+                                        {
+                                        
+                                        'automovel_ano': automovel_ano,
+                                        'automovel_montadora': automovel_montadora,
+                                        'automovel_modelo': automovel_modelo,
+                                        'automovel_motor': automovel_motor
+                                        
+                                        },
+                                    'sintomas_automovel': sintomas_automovel,
+                                    'cod_diagnostico' : cod_diagnostico,
+                                    'cod_falha' : cod_falha,
+                                    'desc_falha' : dict_cod_falha[cod_falha][0],
+                                    'orca_previo' : dict_cod_falha[cod_falha][1],
+                                    
+                                }
+                                
+                                exportarJson(dict_diagnostico)
                             
                             case 2: 
                                 
@@ -483,12 +522,55 @@ def funcaoAdquirirServico(user, lista_id, dict_clientes):
                                 print("Orçamento prévio: R$: {:.2f}".format(float(dict_cod_falha[cod_falha][1])))
                                 cod_diagnostico = geraCodDiagnostico()
                                 print(f"Código do Diagnóstico: {cod_diagnostico}\n")
+                                #VINCULADO
+                                
+                                #SPRINT4
+                                dict_diagnostico =  {
+                                    
+                                    'automovel_dados' : 
+                                        {
+                                        
+                                        'automovel_ano': automovel_ano,
+                                        'automovel_montadora': automovel_montadora,
+                                        'automovel_modelo': automovel_modelo,
+                                        'automovel_motor': automovel_motor
+                                        
+                                        },
+                                    'sintomas_automovel': sintomas_automovel,
+                                    'cod_diagnostico' : cod_diagnostico,
+                                    'cod_falha' : cod_falha,
+                                    'desc_falha' : dict_cod_falha[cod_falha][0],
+                                    'orca_previo' : dict_cod_falha[cod_falha][1],
+                                    
+                                }
+                                
+                                exportarJson(dict_diagnostico)
+                                
                     else:
                         print("\nSucesso, seu diagnóstico foi encaminhado para : CENTRO AUTOMOTIVO - BELA VISTA - RUA PEDROSO. Entraremos em contato em breve! \n")                            
                         print("Descrição da falha: Em análise pelo especialista. Aguarde contato!")
                         print(f"Orçamento prévio: Em análise.")
                         cod_diagnostico = geraCodDiagnostico()
-                        print(f"Código do Diagnóstico: {cod_diagnostico}\n")                
+                        print(f"Código do Diagnóstico: {cod_diagnostico}\n") 
+                        #SPRINT4
+                        dict_diagnostico =  {
+                                        
+                            'automovel_dados' : 
+                                {
+                                'automovel_ano': automovel_ano,
+                                'automovel_montadora': automovel_montadora,
+                                'automovel_modelo': automovel_modelo,
+                                'automovel_motor': automovel_motor            
+                                },
+                            'sintomas_automovel': sintomas_automovel,
+                            'cod_diagnostico' : cod_diagnostico,
+                            'cod_falha' : cod_falha_usuario,
+                            'desc_falha' : 'Em análise',
+                            'orca_previo' : 'Em análise',
+                                        
+                            }
+                                    
+                        exportarJson(dict_diagnostico)              
 
             #adicionando cliente no dicionario - dict_clientes 
             cadastrarCodDiagnostico(len(lista_id), user, cod_diagnostico, dict_clientes)  
@@ -505,7 +587,11 @@ def funcaoAdquirirServico(user, lista_id, dict_clientes):
         case 3:
             print("\nAcompanhamento de Diagnóstico \n")
             cod_diagnostico = tryExceptInputMenu("Digite seu código de diagnóstico: ")
+            
             cod_diagnostico = validaCodigoDiagnostico(cod_diagnostico)
+            #SPRINT4 VALIDAR SE EXISTE O COD_DIAGNOSTICO NO USUARIO (BANCO)
+            
+            
             print(f"\nO Diagnóstico de código: '{cod_diagnostico}' está registrado na : CENTRO AUTOMOTIVO - BELA VISTA - RUA PEDROSO. Estamos no seu aguardo! \n") 
             print("Descrição da falha: Em análise")
             print(f"Orçamento prévio: Em análise.")
