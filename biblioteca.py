@@ -56,16 +56,20 @@ def validacaoMatch(tamanho_max , numero_digitado):
     :param numero_digitado: int do número digitado pelo usuário
     :return: int de um número dentro das opções do match
     """
+    try:
+        numero_digitado = int(numero_digitado)    
+    except ValueError as error:
+        print(f"\nValor Inválido! '{error}' não faz parte de uma das opções.")
+    
     lista_tam = []
     for i in range(1, tamanho_max+1, 1):
         lista_tam.append(i)
-    while(True):
-        if(numero_digitado in lista_tam):
+    while True:
+        if numero_digitado in lista_tam:
             break
         else: 
             print(f"A opção digitada: '{numero_digitado}' não é uma das opções. Possiveis opções : {lista_tam}")
         numero_digitado = tryExceptInputMenu("\nDigite uma opção: ")
-        # numero_digitado = int(input("Digite uma opção: "))
             
     return numero_digitado
      
@@ -169,11 +173,17 @@ def separaString(palavra):
     return palavra_separada
 
 def manterLogin(user, dict_clientes, lista_id, lista_nomes):
-    """
-    """
-    lista_variantes_sim = ["Sim", "SIM", "sim", "sIm"]
-    decisao_login = str(input(f"Quer manter logado com a conta:'{user}'? "))
-    if decisao_login in lista_variantes_sim: 
+
+    print("╔═════════════════════════════════╗")
+    print("║         **Manter Login**        ║")
+    print("║                                 ║")
+    print("║ 1 - Sim                         ║")
+    print("║ 2 - Não                         ║")
+    print("╚═════════════════════════════════╝  \n")
+
+    decisao_login = input(f"Quer manter logado com a conta:'{user}'? Escolha uma das opções acima: ")
+    decisao_login = validacaoMatch(2, decisao_login)
+    if decisao_login == 1: 
         return user
     return funcaoTelaLogin(dict_clientes, lista_id, lista_nomes)
 
@@ -198,7 +208,7 @@ def exportarJson(dict_diagnostico):
         import json
         
         with open (f'codigo_diagonostico_{dict_diagnostico['cod_diagnostico']}.json', 'w', encoding='utf-8') as arquivo:
-            json.dump(dict_diagnostico, arquivo, indent=4)
+            json.dump(dict_diagnostico, arquivo, ensure_ascii= False, indent=4)
         
         print("Diagnóstico exportado em JSON!\n")
              
@@ -214,14 +224,11 @@ def funcaoTelaLogin(dict_clientes, lista_id, lista_nomes ):
     print("║ 2 - Cadastrar conta             ║")
     print("╚═════════════════════════════════╝  \n")
            
-    tela_login_menu = tryExceptInputMenu("\nDigite um número do menu acima: ")  
+    tela_login_menu = str(tryExceptInputMenu("\nDigite um número do menu acima: "))
     tela_login_menu = validacaoMatch(2, tela_login_menu)
-    resposta_cadastrar = ""
-    lista_variantes_sim = ["Sim", "SIM", "sim", "sIm", "SIm"]
-    
+
     if tela_login_menu == 1: 
-        Looping = True
-        while Looping:
+        while True:
             user = str(input("Formato padrão : 'nome.sobrenome'\n"+ 
                              "Digite nome do seu usuario: "))
             user = validaMinCaracteres(user, 6,"Formato padrão : 'nome.sobrenome'\nDigite nome do seu usuario: ")
@@ -229,25 +236,33 @@ def funcaoTelaLogin(dict_clientes, lista_id, lista_nomes ):
                 print("Login realizado com sucesso!")
                 return user
             print(f"\nUsuário: {user}. Não cadastrado!\n")
-            resposta_cadastrar = str(input(("Deseja cadastrar? ")))
+                       
+            print("╔═════════════════════════════════╗")
+            print("║       **Deseja cadastrar**      ║")
+            print("║                                 ║")
+            print("║ 1 - Sim                         ║")
+            print("║ 2 - Não                         ║")
+            print("╚═════════════════════════════════╝  \n")
             
-            if resposta_cadastrar in lista_variantes_sim:
+            resposta_cadastrar = input(("Deseja cadastrar? Digite uma das opções acima: "))
+            resposta_cadastrar = validacaoMatch(2, resposta_cadastrar)
+            if resposta_cadastrar == 1:
+                cadastrarCliente((len(lista_id)), user, dict_clientes, lista_id, lista_nomes)               
                 print(f"\nRegistrando '{user}' no cadastro....\n")
-                Looping = False
+                return user
     
-    if resposta_cadastrar not in lista_variantes_sim: 
-        user = str(input("Formato padrão : 'nome.sobrenome'\n"+ 
+    else:
+        while True:
+            user = str(input("Formato padrão : 'nome.sobrenome'\n"+ 
                              "Digite nome do seu usuario: "))
-        user = validaMinCaracteres(user, 6, "Formato padrão : 'nome.sobrenome'\nDigite nome do seu usuario: ")
-    
-    while True:
-        if user in dict_clientes.keys():
-            print("Usuário já possui cadastro!")
-        else:       
-            cadastrarCliente((len(lista_id)), user, dict_clientes, lista_id, lista_nomes)
-            return user       
-        user = str(input("Digite nome do seu usuario: "))
-
+            user = validaMinCaracteres(user, 6,"Formato padrão : 'nome.sobrenome'\nDigite nome do seu usuario: ")    
+            
+            if user in dict_clientes.keys():
+                print("Usuário já possui cadastro!\n")
+            else:       
+                cadastrarCliente((len(lista_id)), user, dict_clientes, lista_id, lista_nomes)
+                return user       
+            
 def funcaoConsultarServicos():
     '''
     Procedimento de consulta dos serviços disponíveis com uma breve descrição de suas funções.
@@ -322,7 +337,7 @@ def funcaoAdquirirServico(user, lista_id, dict_clientes):
                     
                     #SPRINT4
                     dict_diagnostico =  {
-                                    
+                        'usuario' : {user : dict_clientes[user]},            
                         'automovel_dados' : 
                             {
                             'automovel_ano': automovel_ano,
@@ -448,7 +463,7 @@ def funcaoAdquirirServico(user, lista_id, dict_clientes):
                                 
                                 #SPRINT4
                                 dict_diagnostico =  {
-                                    
+                                    'user' : user,
                                     'automovel_dados' : 
                                         {
                                         
@@ -526,7 +541,7 @@ def funcaoAdquirirServico(user, lista_id, dict_clientes):
                                 
                                 #SPRINT4
                                 dict_diagnostico =  {
-                                    
+                                    'user' : user,  
                                     'automovel_dados' : 
                                         {
                                         
@@ -554,7 +569,7 @@ def funcaoAdquirirServico(user, lista_id, dict_clientes):
                         print(f"Código do Diagnóstico: {cod_diagnostico}\n") 
                         #SPRINT4
                         dict_diagnostico =  {
-                                        
+                            'user' : user,            
                             'automovel_dados' : 
                                 {
                                 'automovel_ano': automovel_ano,
@@ -564,7 +579,7 @@ def funcaoAdquirirServico(user, lista_id, dict_clientes):
                                 },
                             'sintomas_automovel': sintomas_automovel,
                             'cod_diagnostico' : cod_diagnostico,
-                            'cod_falha' : cod_falha_usuario,
+                            'cod_falha' : 'Em análise',
                             'desc_falha' : 'Em análise',
                             'orca_previo' : 'Em análise',
                                         

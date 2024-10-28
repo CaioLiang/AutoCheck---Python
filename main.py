@@ -4,6 +4,7 @@ from biblioteca import *
 #Criar CRUD
 #Documentar as novas funções
 #Saida de dados em JSON
+#Verificar 
 
 
 # Dicionario de Usuários
@@ -46,7 +47,7 @@ while True:
         case 4:
             break
     
-    manterLogin(user, dict_clientes, lista_id, lista_nomes)
+    user = manterLogin(user, dict_clientes, lista_id, lista_nomes)
     
     #DEV       
     print("\n", dict_clientes)
