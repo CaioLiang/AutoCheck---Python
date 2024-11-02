@@ -1,5 +1,6 @@
 #ADICIONAIS
 from conexaoBD import *  
+from pprint import pprint
 
 def tryExceptInputMenu(label):
     while True:
@@ -219,8 +220,11 @@ def credenciaisJson():
     print("\nCONEXÃO COM BANCO DE DADOS\n" +
           "Forneça suas credencias para conexão com banco de dados da ORACLE - FIAP: \n")
     
-    user = input("Digite o seu usuário: ")
-    password = input("Digite sua senha: ")
+    print("\nNota: digite seu do seguinte modelo 'rm' + 'numeros do rm' | rm111111 \n")
+    
+    user = input("Digite o seu rm: ")
+    password = input("Digite a sua senha: ")
+    
     
     dict_credenciais = {
         'login' : user,
@@ -548,7 +552,7 @@ def funcaoAdquirirServico(user, lista_id, dict_clientes):
                                 }
                                 
                                 exportarJson(dict_diagnostico)
-                                
+                                            
                     else:
                         print("\nSucesso, seu diagnóstico foi encaminhado para : CENTRO AUTOMOTIVO - BELA VISTA - RUA PEDROSO. Entraremos em contato em breve! \n")                            
                         print("Descrição da falha: Em análise pelo especialista. Aguarde contato!")
@@ -615,14 +619,23 @@ def funcaoAdquirirServico(user, lista_id, dict_clientes):
             
             acompanhar_diagnostico = input("Digite uma das opções acima: ")
             acompanhar_diagnostico = validacaoMatch(3, acompanhar_diagnostico)
+                       
             match acompanhar_diagnostico:
                 case 1:
-                    query = 'SELECT * from TB_CLIENTE'
+                    query = f'SELECT {cod_diagnostico} from TB_DIAGNOSTICO'
                     cursor.execute(query)
                     tabela = cursor.fetchall()
-                    print (tabela)
+                    pprint (tabela)
                 case 2:
-                    print("")
+                    query = f'UPDATE TB_DIAGNOSTICO set {campo} = {valor_novo} WHERE id_diagnostico = {id_digitado}'
+                    cursor.execute(query)
+                    tabela = cursor.fetchall()
+                    pprint (tabela)
+                case 3:
+                    query = f'DELETE FROM TB_DIAGNOSTICO WHERE id_diagnostico = {id_digitado}'
+                    cursor.execute(query)
+                    tabela = cursor.fetchall()
+                    pprint (tabela) 
                 
             #SPRINT4 VALIDAR SE EXISTE O COD_DIAGNOSTICO NO USUARIO (BANCO)
                         
