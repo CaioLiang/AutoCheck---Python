@@ -1,4 +1,5 @@
 #ADICIONAIS
+from conexaoBD import *  
 
 def tryExceptInputMenu(label):
     while True:
@@ -211,7 +212,24 @@ def exportarJson(dict_diagnostico):
             json.dump(dict_diagnostico, arquivo, ensure_ascii= False, indent=4)
         
         print("Diagnóstico exportado em JSON!\n")
-             
+
+def credenciaisJson():
+    import json
+    
+    print("\nCONEXÃO COM BANCO DE DADOS\n" +
+          "Forneça suas credencias para conexão com banco de dados da ORACLE - FIAP: \n")
+    
+    user = input("Digite o seu usuário: ")
+    password = input("Digite sua senha: ")
+    
+    dict_credenciais = {
+        'login' : user,
+        'senha' : password
+    }
+        
+    with open (f'credenciais.json', 'w', encoding='utf-8') as arquivo:
+        json.dump(dict_credenciais, arquivo, ensure_ascii= False, indent=4)         
+
 #SISTEMA
 
 def funcaoTelaLogin(dict_clientes, lista_id, lista_nomes ):
@@ -422,36 +440,20 @@ def funcaoAdquirirServico(user, lista_id, dict_clientes):
                                 falha_eletrica = validacaoMatch(8, falha_eletrica)     
                                 match falha_eletrica:
                                     case 1:                                     
-                                        # descricao_codfalha = "Tensao Bateria Tensão da bateria"
                                         cod_falha = "C0800"
-                                        # orcamento_previo = 340.00  
                                     case 2:
-                                        # descricao_codfalha = "ArCondicionado Ar Condicionado"
                                         cod_falha = "P0645"
-                                        # orcamento_previo = 998.30
                                     case 3:
-                                        # descricao_codfalha = "PressaoSistema Pressão do sistema"
                                         cod_falha = "P0087" 
-                                        # orcamento_previo = 256.90
                                     case 4:
-                                        # descricao_codfalha = "FalhaIgnicao Falha de ignição"
                                         cod_falha = "P0300"
-                                        # orcamento_previo = 40.00
                                     case 5:
-                                        # descricao_codfalha = "Rele Bomba Ar Rele da bomba de ar"
                                         cod_falha = "P0418"
-                                        # orcamento_previo = 133.00
                                     case 6:
-                                        # descricao_codfalha = "Mau funcionamentodocircuitode controle daluz"
                                         cod_falha = "P0650"
-                                        # orcamento_previo = 49.80
                                     case 7:
-                                        # descricao_codfalha = "Alternador Alternador"
                                         cod_falha = "P0620"
-                                        # orcamento_previo = 580.00
                                     case 8:
-                                        # descricao_codfalha = "Em análise"
-                                        # orcamento_previo = "Em análise"
                                         cod_falha = "Em análise"
                     
                                 print("\nSucesso, seu diagnóstico foi encaminhado para : CENTRO AUTOMOTIVO - BELA VISTA - RUA PEDROSO. Entraremos em contato em breve! \n") 
@@ -503,33 +505,19 @@ def funcaoAdquirirServico(user, lista_id, dict_clientes):
                 
                                 match falha_mecanica:
                                     case 1:
-                                        # descricao_codfalha = "SensVelocRodaDD Sensor de velocidade da roda dianteira direita"
-                                        cod_falha = "P1712"
-                                        # orcamento_previo = 134.44                                       
+                                        cod_falha = "P1712"                              
                                     case 2:
-                                        # descricao_codfalha = "TemperaturaMotor Temperatura do motor"
                                         cod_falha = "P0217"
-                                        # orcamento_previo = 70.14 
                                     case 3:
-                                        # descricao_codfalha = "Cilindro1– Falhade balanceamento "
                                         cod_falha = "P0263" 
-                                        # orcamento_previo = 100.13 
                                     case 4:
-                                        # descricao_codfalha = "SensVelocidRoda Sensor de velocidade da roda"
                                         cod_falha = "C0238"
-                                        # orcamento_previo = 200.39 
                                     case 5:
-                                        # descricao_codfalha = "Mau funcionamentodocircuitodosensorde posiçãodaembreagem"
                                         cod_falha = "P0805"
-                                        # orcamento_previo = 120.85 
                                     case 6:
-                                        # descricao_codfalha = "Mau funcionamentodocircuitoindicadordasvelasaquecedora"
                                         cod_falha = "P0381"
-                                        # orcamento_previo = 278.24 
                                     case 7:
-                                        # descricao_codfalha = "Em análise"
                                         cod_falha = "Em análise"
-                                        # orcamento_previo = 0 
 
                                 print("\nSucesso, seu diagnóstico foi encaminhado para : CENTRO AUTOMOTIVO - BELA VISTA - RUA PEDROSO. Entraremos em contato em breve! \n")
                                 print(f"Código de Falha: {cod_falha}")
@@ -600,13 +588,44 @@ def funcaoAdquirirServico(user, lista_id, dict_clientes):
                 "\n2 - Alameda Araguaia, 211 - Alphaville Industrial, Barueri - SP, 06455-000\n" +
                 "\n3 - Alameda Araguaia, 3600 - Tamboré, Barueri - SP, 06455-000 \n")            
         case 3:
+            
+            credenciaisJson()
+            
+            while True:
+                try:
+                    conn = conecta_banco()
+                    cursor = conn.cursor()
+                except: 
+                    print("\nERROP DE CREDENCIAIS\n")
+                    credenciaisJson()
+                break
+                    
             print("\nAcompanhamento de Diagnóstico \n")
             cod_diagnostico = tryExceptInputMenu("Digite seu código de diagnóstico: ")
-            
             cod_diagnostico = validaCodigoDiagnostico(cod_diagnostico)
+            
+            print("\nOpções de acompanhamento: \n")  
+            print("╔════════════════════════════════════════════╗")
+            print("║         **ACOMPANHAR DIAGNOSTICO**         ║")
+            print("║                                            ║")
+            print("║ 1 - Ver informações                        ║")
+            print("║ 2 - Atualizar diagnostico                  ║")
+            print("║ 3 - Deletar diagnostico                    ║")                     
+            print("╚════════════════════════════════════════════╝  \n")
+            
+            acompanhar_diagnostico = input("Digite uma das opções acima: ")
+            acompanhar_diagnostico = validacaoMatch(3, acompanhar_diagnostico)
+            match acompanhar_diagnostico:
+                case 1:
+                    query = 'SELECT * from TB_CLIENTE'
+                    cursor.execute(query)
+                    tabela = cursor.fetchall()
+                    print (tabela)
+                case 2:
+                    print("")
+                
             #SPRINT4 VALIDAR SE EXISTE O COD_DIAGNOSTICO NO USUARIO (BANCO)
-            
-            
+                        
             print(f"\nO Diagnóstico de código: '{cod_diagnostico}' está registrado na : CENTRO AUTOMOTIVO - BELA VISTA - RUA PEDROSO. Estamos no seu aguardo! \n") 
             print("Descrição da falha: Em análise")
             print(f"Orçamento prévio: Em análise.")

@@ -19,12 +19,3 @@ def conecta_banco():
         password=senha,
         dsn=dsn)
     return conn
-
-
-conn = conecta_banco()
-cursor = conn.cursor()
-
-query = 'SELECT * from TB_ALUNO'
-cursor.execute(query)
-tabela = cursor.fetchall()
-print (tabela)
