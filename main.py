@@ -1,16 +1,18 @@
 from biblioteca import *
+import os
 
 #AUTOCHECK NOTAS:
-#Criar CRUD
-#Documentar as novas funções
-#Saida de dados em JSON
-#Verificar 
-
 
 # Dicionario de Usuários
 
-lista_id = [0, 1, 2, 3, 4]
-lista_nomes = ["admin", "allan.brito", "caio.liang", "levi.magni", "kaique.oliveira"]
+lista_id = []
+lista_nomes = []
+
+dict_usuarios = lerLogin()
+
+for usuario in dict_usuarios:
+    lista_id.append(usuario[0]) 
+    lista_nomes.append(usuario[1])
 
 dict_clientes = funcaoDictClientes(lista_id, lista_nomes)
 
@@ -20,6 +22,7 @@ dict_codDiagnostico = {}
 
 user = funcaoTelaLogin(dict_clientes, lista_id, lista_nomes)
 
+arquivo = 'credenciais.json'
 
 while True:   
   
@@ -48,7 +51,14 @@ while True:
             break
     
     user = manterLogin(user, dict_clientes, lista_id, lista_nomes)
-    
+
+    try: 
+        os.path.exists(arquivo)
+        os.remove(arquivo)
+        print(f'O arquivo {arquivo} foi apagado com sucesso.')
+    except:
+        print(f'O arquivo {arquivo} não foi encontrado.')
+
     #DEV       
     print("\n", dict_clientes)
     print("\n", lista_nomes)

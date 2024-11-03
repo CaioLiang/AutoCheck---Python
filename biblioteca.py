@@ -1,7 +1,7 @@
-#ADICIONAIS
+ #ADICIONAIS
 from conexaoBD import *  
 from pprint import pprint
-
+    
 def tryExceptInputMenu(label):
     while True:
         try:
@@ -177,7 +177,7 @@ def separaString(palavra):
 def manterLogin(user, dict_clientes, lista_id, lista_nomes):
 
     print("╔═════════════════════════════════╗")
-    print("║         **Manter Login**        ║")
+    print("║         **MANTER LOGIN**        ║")
     print("║                                 ║")
     print("║ 1 - Sim                         ║")
     print("║ 2 - Não                         ║")
@@ -234,6 +234,46 @@ def credenciaisJson():
     with open (f'credenciais.json', 'w', encoding='utf-8') as arquivo:
         json.dump(dict_credenciais, arquivo, ensure_ascii= False, indent=4)         
 
+def comandoConexaoBD(query_script):
+    while True:
+        try:
+            conn = conecta_banco()  # Assumindo que essa função está definida
+            cursor = conn.cursor()
+            cursor.execute(query_script)  # Execute a consulta
+
+            # Commit para comandos que alteram o banco de dados
+            if query_script.strip().upper().startswith(('INSERT', 'UPDATE', 'DELETE')):
+                conn.commit()
+            
+            # Verificação para comandos SELECT
+            if query_script.strip().upper().startswith('SELECT'):
+                resultados = cursor.fetchall()
+                
+                if resultados:
+                    print("Consulta retornou resultados.")
+                else:
+                    print("Consulta não retornou resultados.")
+                
+                print("Comando executado com sucesso!")
+                return resultados
+            
+            print("Comando executado com sucesso!")
+            break
+        except Exception as e: 
+            print("\nERRO DE CREDENCIAIS\n")
+            credenciaisJson()  # Assumindo que essa função está definida
+            print(f"\nErro: {e}\n")
+
+    cursor.close()
+    conn.close()
+    
+def lerLogin():
+    
+    dicionario = comandoConexaoBD('SELECT * FROM TB_LOGIN')
+    
+    return dicionario
+
+    
 #SISTEMA
 
 def funcaoTelaLogin(dict_clientes, lista_id, lista_nomes ):
@@ -260,7 +300,7 @@ def funcaoTelaLogin(dict_clientes, lista_id, lista_nomes ):
             print(f"\nUsuário: {user}. Não cadastrado!\n")
                        
             print("╔═════════════════════════════════╗")
-            print("║       **Deseja cadastrar**      ║")
+            print("║       **DESEJA CADASTRAR**      ║")
             print("║                                 ║")
             print("║ 1 - Sim                         ║")
             print("║ 2 - Não                         ║")
@@ -374,7 +414,10 @@ def funcaoAdquirirServico(user, lista_id, dict_clientes):
                         'orca_previo' : 'Em análise',
                                     
                         }
-                                
+                    
+                    
+                    # inserirUsuario()
+                    # inserirDiagnostico()            
                     exportarJson(dict_diagnostico)
                     
                 case 2:
@@ -619,7 +662,10 @@ def funcaoAdquirirServico(user, lista_id, dict_clientes):
             
             acompanhar_diagnostico = input("Digite uma das opções acima: ")
             acompanhar_diagnostico = validacaoMatch(3, acompanhar_diagnostico)
-                       
+            
+            #REMOVER
+            
+            '''
             match acompanhar_diagnostico:
                 case 1:
                     query = f'SELECT {cod_diagnostico} from TB_DIAGNOSTICO'
@@ -636,6 +682,7 @@ def funcaoAdquirirServico(user, lista_id, dict_clientes):
                     cursor.execute(query)
                     tabela = cursor.fetchall()
                     pprint (tabela) 
+            '''           
                 
             #SPRINT4 VALIDAR SE EXISTE O COD_DIAGNOSTICO NO USUARIO (BANCO)
                         
