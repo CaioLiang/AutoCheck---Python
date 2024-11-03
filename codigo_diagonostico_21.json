@@ -1,0 +1,19 @@
+{
+    "usuario": {
+        "caio.liang": {
+            "15": []
+        }
+    },
+    "automovel_dados": {
+        "automovel_ano": 1999,
+        "automovel_montadora": "CASDASDWEWQE",
+        "automovel_modelo": "SDASDDWQQWE",
+        "automovel_motor": "DsAMDLKALKDMLASK"
+    },
+    "sintomas_automovel": "ESTÀ COM PROBLEMAS",
+    "categoria_diagnostico": "N",
+    "cod_diagnostico": 21,
+    "cod_falha": "P1111",
+    "desc_falha": "Em análise",
+    "orca_previo": "Em análise"
+}

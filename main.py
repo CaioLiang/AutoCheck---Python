@@ -60,6 +60,7 @@ while True:
     print("\n", lista_nomes)
     print("\n", lista_id)
 
+
 excluiCredenciais(caminho)
 
 print("\n", dict_clientes)

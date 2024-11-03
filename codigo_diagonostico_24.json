@@ -1,0 +1,21 @@
+{
+    "usuario": {
+        "caio.liang": {
+            "17": []
+        }
+    },
+    "automovel_dados": {
+        "automovel_chassi": "OOOOOOOOOOOOOOOOO",
+        "automovel_ano": 1888,
+        "automovel_marca": "18888",
+        "automovel_modelo": "18888",
+        "automovel_ano_modelo": 1888,
+        "automovel_motor": "MOTOR 4.0"
+    },
+    "sintomas_automovel": "PROBLEMA AUTOMOTIVO",
+    "categoria_diagnostico": "N",
+    "cod_diagnostico": 24,
+    "cod_falha": "P0000",
+    "desc_falha": "Em análise",
+    "orca_previo": "Em análise"
+}

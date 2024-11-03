@@ -198,10 +198,8 @@ def manterLogin(user, dict_clientes, lista_id, lista_nomes):
 
 def funcaoDictClientes(lista_id, lista_nomes):
     dict_clientes = dict(zip(lista_nomes , lista_id))
-    
     for  users in dict_clientes.keys():
-        dict_clientes[users] = {lista_nomes.index(users) + 1: ()}
-
+        dict_clientes[users] = {dict_clientes[users]: ()}
     return dict_clientes
 
 def exportarJson(dict_diagnostico): 
@@ -273,7 +271,7 @@ def comandoConexaoBD(query_script):
     conn.close()
     
 def lerLogin():
-    print("\n----------------LEITURA DOS DADOS----------------\n")
+    print("\n----------------LEITURA DOS USUARIOS - BANCO ----------------\n")
     dicionario = comandoConexaoBD('SELECT * FROM TB_LOGIN')
     return dicionario
 
@@ -306,7 +304,7 @@ def excluiCredenciais(arquivo):
 
 def lerCodDiagnostico():
     sql_diagnostico = 'SELECT * FROM TB_DIAGNOSTICO'
-    print("\n----------------LEITURA DOS DADOS----------------\n")
+    print("\n----------------LEITURA DOS DIAGNOSTICOS - BANCO----------------\n")
     infos_tabela = comandoConexaoBD(sql_diagnostico)
     lista_id_diagnostico = []
     
@@ -405,12 +403,16 @@ def funcaoAdquirirServico(user, lista_id, dict_clientes, lista_cod_diagostico):
         case 1:
             print("\nEntendo, preciso de mais informações do seu automóvel: \n" +
             "Preencha os seguintes campos: \n")
+            automovel_chassi = str(input("Chassi: "))
+            automovel_chassi = validaMinCaracteres(automovel_chassi, 17, "Chassi: ")
             automovel_ano = tryExceptInputMenu("Ano: ")
             automovel_ano = validaAno(automovel_ano)
-            automovel_montadora = str(input("Montadora: "))
-            automovel_montadora = validaMinCaracteres(automovel_montadora, 3, "Montadora: ")
+            automovel_marca = str(input("Marca: "))
+            automovel_marca = validaMinCaracteres(automovel_marca, 3, "Marca: ")
             automovel_modelo = str(input("Modelo: "))
             automovel_modelo = validaMinCaracteres(automovel_modelo, 3, "Modelo: ")
+            automovel_ano_modelo = tryExceptInputMenu("Ano do modelo: ")
+            automovel_ano_modelo = validaAno(automovel_ano_modelo)
             automovel_motor = str(input("Motor: "))
             automovel_motor = validaMinCaracteres(automovel_motor, 7, "Motor: ")
             print("\n\nSobre o código de falha: \n")
@@ -436,28 +438,44 @@ def funcaoAdquirirServico(user, lista_id, dict_clientes, lista_cod_diagostico):
                     print("Orçamento prévio: Em análise")
                     cod_diagnostico = geraCodDiagnostico(lista_cod_diagostico)
                     print(f"Código do Diagnóstico: {cod_diagnostico}\n")
-                    
+                    categoria_diagnostico = 'N'
+                    desc_falha = 'Em análise'
+                    orca_previo = 'Em análise'
                     #SPRINT4
                     dict_diagnostico =  {
                         'usuario' : {user : dict_clientes[user]},            
                         'automovel_dados' : 
                             {
+                            'automovel_chassi': automovel_chassi,
                             'automovel_ano': automovel_ano,
-                            'automovel_montadora': automovel_montadora,
+                            'automovel_marca': automovel_marca,
                             'automovel_modelo': automovel_modelo,
+                            'automovel_ano_modelo': automovel_ano_modelo,
                             'automovel_motor': automovel_motor            
                             },
                         'sintomas_automovel': sintomas_automovel,
+                        'categoria_diagnostico': categoria_diagnostico,
                         'cod_diagnostico' : cod_diagnostico,
                         'cod_falha' : cod_falha_usuario,
-                        'desc_falha' : 'Em análise',
-                        'orca_previo' : 'Em análise',
+                        'desc_falha' : desc_falha,
+                        'orca_previo' : orca_previo,
                                     
                         }
+                    print("\n-------------INSERINDO DIAGNOSTICO-------------")
+                    sql_inserir_diagnostico = f"INSERT INTO TB_DIAGNOSTICO (cod_falha_diagnostico, categoria_diagnostico, descricao_diagnostico, descricao_problema_diagnostico) VALUES ('{cod_falha_usuario}', '{categoria_diagnostico}', '{desc_falha}', '{sintomas_automovel}')"
+                    comandoConexaoBD(sql_inserir_diagnostico)
+                    print("\n-------------INSERINDO CARRO-------------")
+                    sql_inserir_automovel = f"INSERT INTO tb_carro (chassi_carro, marca_carro, modelo_carro, ano_fabricacao_carro, ano_modelo_carro) VALUES ('{automovel_chassi}', '{automovel_marca}', '{automovel_modelo}', '{automovel_ano}', '{automovel_ano_modelo}')"
+                    comandoConexaoBD(sql_inserir_automovel)
+                    print("\n-------------BUSCANDO ID CARRO-------------")
+                    sql_select_carro = f"SELECT id_carro FROM tb_carro WHERE chassi_carro = '{automovel_chassi}'"
+                    id_carro_cadastro = comandoConexaoBD(sql_select_carro)                
+                    print("\n-------------ATRELANDO CARRO AO USUARIO-------------")
+                    sql_inserir_usuario_automovel = f"INSERT INTO tb_usuario_carro (id_usuario, id_carro, ativo) VALUES ({int(list(dict_clientes[user].keys())[0])}, {int(id_carro_cadastro[0][0])}, 'S')" 
+                    comandoConexaoBD(sql_inserir_usuario_automovel)
                     
-                    # sql_inserir_diagnostico = ""
-                    # comandoConexaoBD(sql_inserir_diagnostico)
                     exportarJson(dict_diagnostico)
+
                     
                 case 2:
                     sintomas_automovel = str(input("Entendo, descreve o problema do seu automóvel: "))
@@ -487,7 +505,6 @@ def funcaoAdquirirServico(user, lista_id, dict_clientes, lista_cod_diagostico):
                     conhecimento_causa = validacaoMatch(2, conhecimento_causa)
                     if(conhecimento_causa == 1):
                         
-                        #implementar biblioteca PANDAS
                         dict_cod_falha = {
                         #"cod_falha": ("descrição tecnica", valor estimado)
                         "C0800": ("Tensao Bateria Tensão da bateria", 340.00),   
@@ -556,7 +573,7 @@ def funcaoAdquirirServico(user, lista_id, dict_clientes, lista_cod_diagostico):
                                         {
                                         
                                         'automovel_ano': automovel_ano,
-                                        'automovel_montadora': automovel_montadora,
+                                        'automovel_marca': automovel_marca,
                                         'automovel_modelo': automovel_modelo,
                                         'automovel_motor': automovel_motor
                                         
@@ -620,7 +637,7 @@ def funcaoAdquirirServico(user, lista_id, dict_clientes, lista_cod_diagostico):
                                         {
                                         
                                         'automovel_ano': automovel_ano,
-                                        'automovel_montadora': automovel_montadora,
+                                        'automovel_marca': automovel_marca,
                                         'automovel_modelo': automovel_modelo,
                                         'automovel_motor': automovel_motor
                                         
@@ -647,7 +664,7 @@ def funcaoAdquirirServico(user, lista_id, dict_clientes, lista_cod_diagostico):
                             'automovel_dados' : 
                                 {
                                 'automovel_ano': automovel_ano,
-                                'automovel_montadora': automovel_montadora,
+                                'automovel_marca': automovel_marca,
                                 'automovel_modelo': automovel_modelo,
                                 'automovel_motor': automovel_motor            
                                 },
