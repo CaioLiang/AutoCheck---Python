@@ -1,5 +1,6 @@
  #ADICIONAIS
 from conexaoBD import *  
+import os
 
 def tryExceptInputMenu(label):
     while True:
@@ -81,15 +82,15 @@ def validacaoMatch(tamanho_max , numero_digitado):
             
     return numero_digitado
      
-def geraCodDiagnostico():
+def geraCodDiagnostico(lista_id_diagnostico):
     """
-    Função para gerar um número alaleatório entre 10000000 e 99999999.
+    Função para gerar o próximo número da lista de diagnostico.
 
-    :return: int de um número aleatório entre 10000000 e 99999999
+    :return: int do próximo número
     """
-    import random
-    codigo_diagnostico = random.randint(10000000, 99999999)
-    return codigo_diagnostico
+    lista_id_diagnostico.append(len(lista_id_diagnostico) + 1)
+    
+    return len(lista_id_diagnostico)
 
 def validaCodigoDiagnostico(cod_diagnostico):
     """
@@ -272,9 +273,8 @@ def comandoConexaoBD(query_script):
     conn.close()
     
 def lerLogin():
-    
+    print("\n----------------LEITURA DOS DADOS----------------\n")
     dicionario = comandoConexaoBD('SELECT * FROM TB_LOGIN')
-    
     return dicionario
 
 def gera_digito_verificador(cpf_parcial):
@@ -303,12 +303,22 @@ def excluiCredenciais(arquivo):
         print(f'O arquivo {arquivo} foi apagado com sucesso.')
     except:
         print(f'O arquivo {arquivo} não foi encontrado.')
-        
+
+def lerCodDiagnostico():
+    sql_diagnostico = 'SELECT * FROM TB_DIAGNOSTICO'
+    print("\n----------------LEITURA DOS DADOS----------------\n")
+    infos_tabela = comandoConexaoBD(sql_diagnostico)
+    lista_id_diagnostico = []
+    
+    for info in infos_tabela:
+        lista_id_diagnostico.append(info[0])
+    return lista_id_diagnostico    
+
 #SISTEMA
 
 def funcaoTelaLogin(dict_clientes, lista_id, lista_nomes ):
     
-    print("***** AUTOCHECK - PORTO SEGURO ***** \n")
+    print("\n***** AUTOCHECK - PORTO SEGURO ***** \n")
     print("╔═════════════════════════════════╗")
     print("║    **Bem-vindo à AutoCheck**    ║")
     print("║                                 ║")
@@ -376,7 +386,7 @@ def funcaoConsultarServicos():
 
     print(dicionario_infos["consulta"][consulta_menu])
 
-def funcaoAdquirirServico(user, lista_id, dict_clientes):
+def funcaoAdquirirServico(user, lista_id, dict_clientes, lista_cod_diagostico):
     '''
     Procedimento de adquirir um serviço da AutoCheck, na qual proporciona: Diagnóstico, Centro Automotivo mais próximo e Acompanhar diagnóstico.
     '''
@@ -424,7 +434,7 @@ def funcaoAdquirirServico(user, lista_id, dict_clientes):
                     print(f"Código de Falha: {cod_falha_usuario}")
                     print("Descrição da falha: Em análise.")
                     print("Orçamento prévio: Em análise")
-                    cod_diagnostico = geraCodDiagnostico()
+                    cod_diagnostico = geraCodDiagnostico(lista_cod_diagostico)
                     print(f"Código do Diagnóstico: {cod_diagnostico}\n")
                     
                     #SPRINT4
@@ -445,9 +455,8 @@ def funcaoAdquirirServico(user, lista_id, dict_clientes):
                                     
                         }
                     
-                    
-                    # inserirUsuario()
-                    # inserirDiagnostico()            
+                    # sql_inserir_diagnostico = ""
+                    # comandoConexaoBD(sql_inserir_diagnostico)
                     exportarJson(dict_diagnostico)
                     
                 case 2:
@@ -537,7 +546,7 @@ def funcaoAdquirirServico(user, lista_id, dict_clientes):
                                 print(f"Código de Falha: {cod_falha}")
                                 print(f"Descrição da falha: {dict_cod_falha[cod_falha][0]}")
                                 print("Orçamento prévio: R$: {:.2f}".format(float(dict_cod_falha[cod_falha][1])))
-                                cod_diagnostico = geraCodDiagnostico()
+                                cod_diagnostico = geraCodDiagnostico(lista_cod_diagostico)
                                 print(f"Código do Diagnóstico: {cod_diagnostico}\n")
                                 
                                 #SPRINT4
@@ -600,7 +609,7 @@ def funcaoAdquirirServico(user, lista_id, dict_clientes):
                                 print(f"Código de Falha: {cod_falha}")
                                 print(f"Descrição da falha: {dict_cod_falha[cod_falha][0]}")
                                 print("Orçamento prévio: R$: {:.2f}".format(float(dict_cod_falha[cod_falha][1])))
-                                cod_diagnostico = geraCodDiagnostico()
+                                cod_diagnostico = geraCodDiagnostico(lista_cod_diagostico)
                                 print(f"Código do Diagnóstico: {cod_diagnostico}\n")
                                 #VINCULADO
                                 
@@ -630,7 +639,7 @@ def funcaoAdquirirServico(user, lista_id, dict_clientes):
                         print("\nSucesso, seu diagnóstico foi encaminhado para : CENTRO AUTOMOTIVO - BELA VISTA - RUA PEDROSO. Entraremos em contato em breve! \n")                            
                         print("Descrição da falha: Em análise pelo especialista. Aguarde contato!")
                         print(f"Orçamento prévio: Em análise.")
-                        cod_diagnostico = geraCodDiagnostico()
+                        cod_diagnostico = geraCodDiagnostico(lista_cod_diagostico)
                         print(f"Código do Diagnóstico: {cod_diagnostico}\n") 
                         #SPRINT4
                         dict_diagnostico =  {

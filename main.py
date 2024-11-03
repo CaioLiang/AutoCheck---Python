@@ -1,9 +1,8 @@
 from biblioteca import *
-import os
 
 #AUTOCHECK NOTAS:
 
-# Dicionario de Usuários
+# Dicionario de usuários
 
 lista_id = []
 lista_nomes = []
@@ -17,6 +16,8 @@ for usuario in dict_usuarios:
 dict_clientes = funcaoDictClientes(lista_id, lista_nomes)
 
 dict_codDiagnostico = {}
+
+lista_cod_diagostico = lerCodDiagnostico()
 
 #main
 
@@ -44,7 +45,7 @@ while True:
         case 1:
             funcaoConsultarServicos()
         case 2:
-            funcaoAdquirirServico(user, lista_id, dict_clientes)        
+            funcaoAdquirirServico(user, lista_id, dict_clientes, lista_cod_diagostico)        
         case 3:
             funcaoFaleConosco() 
         case 4:
