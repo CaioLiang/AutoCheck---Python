@@ -1,0 +1,1 @@
+Atenção: caso não possua as tabelas da AutoCheck, utilize da pasta scripts_sql.

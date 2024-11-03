@@ -1,7 +1,6 @@
  #ADICIONAIS
 from conexaoBD import *  
-from pprint import pprint
-    
+
 def tryExceptInputMenu(label):
     while True:
         try:
@@ -12,10 +11,17 @@ def tryExceptInputMenu(label):
     return opcao_menu
 
 def cadastrarCliente (id, nome, dict_clientes, lista_id, lista_nomes):
+    id += 1
     dict_clientes[nome] = {id : ()}
     lista_id = lista_id.append(id)
     lista_nomes = lista_nomes.append(nome)
-
+    cpf = gera_cpf()
+    print()
+    sql_insert_usuario = f"INSERT INTO TB_USUARIO (nome_usuario, cpf_usuario, endereco_usuario, tel_usuario) VALUES ('{nome}', '{cpf}', 'Rua padrao autocheck, 366', '11987654330')"
+    comandoConexaoBD(sql_insert_usuario)
+    sql_insert_login = f"INSERT INTO tb_login (id_usuario, login_usuario, senha_usuario) VALUES ({id}, '{nome}', 'SEM_SENHA')"
+    comandoConexaoBD(sql_insert_login)
+    
 def cadastrarCodDiagnostico (id, user, cod_diagnostico, dict_clientes):
     if user in dict_clientes.keys():
         #identifica qual id do usuario
@@ -193,7 +199,7 @@ def funcaoDictClientes(lista_id, lista_nomes):
     dict_clientes = dict(zip(lista_nomes , lista_id))
     
     for  users in dict_clientes.keys():
-        dict_clientes[users] = {lista_nomes.index(users): ()}
+        dict_clientes[users] = {lista_nomes.index(users) + 1: ()}
 
     return dict_clientes
 
@@ -237,15 +243,13 @@ def credenciaisJson():
 def comandoConexaoBD(query_script):
     while True:
         try:
-            conn = conecta_banco()  # Assumindo que essa função está definida
+            conn = conecta_banco()
             cursor = conn.cursor()
-            cursor.execute(query_script)  # Execute a consulta
+            cursor.execute(query_script)  
 
-            # Commit para comandos que alteram o banco de dados
             if query_script.strip().upper().startswith(('INSERT', 'UPDATE', 'DELETE')):
                 conn.commit()
             
-            # Verificação para comandos SELECT
             if query_script.strip().upper().startswith('SELECT'):
                 resultados = cursor.fetchall()
                 
@@ -261,8 +265,8 @@ def comandoConexaoBD(query_script):
             break
         except Exception as e: 
             print("\nERRO DE CREDENCIAIS\n")
-            credenciaisJson()  # Assumindo que essa função está definida
             print(f"\nErro: {e}\n")
+            credenciaisJson()  
 
     cursor.close()
     conn.close()
@@ -273,7 +277,33 @@ def lerLogin():
     
     return dicionario
 
+def gera_digito_verificador(cpf_parcial):
+    soma = 0
+    peso = len(cpf_parcial) + 1
+    for digito in cpf_parcial:
+        soma += int(digito) * peso
+        peso -= 1
+    resto = 11 - (soma % 11)
+    return 0 if resto > 9 else resto
+
+def gera_cpf():
+    import random
     
+    cpf_parcial = [str(random.randint(0, 9)) for _ in range(9)]
+    digito1 = gera_digito_verificador(cpf_parcial)
+    cpf_parcial.append(str(digito1))
+    digito2 = gera_digito_verificador(cpf_parcial)
+    cpf_parcial.append(str(digito2))
+    return ''.join(cpf_parcial)
+
+def excluiCredenciais(arquivo):
+    try: 
+        os.path.exists(arquivo)
+        os.remove(arquivo)
+        print(f'O arquivo {arquivo} foi apagado com sucesso.')
+    except:
+        print(f'O arquivo {arquivo} não foi encontrado.')
+        
 #SISTEMA
 
 def funcaoTelaLogin(dict_clientes, lista_id, lista_nomes ):
@@ -664,14 +694,11 @@ def funcaoAdquirirServico(user, lista_id, dict_clientes):
             acompanhar_diagnostico = validacaoMatch(3, acompanhar_diagnostico)
             
             #REMOVER
-            
-            '''
+            ''' 
             match acompanhar_diagnostico:
                 case 1:
                     query = f'SELECT {cod_diagnostico} from TB_DIAGNOSTICO'
-                    cursor.execute(query)
-                    tabela = cursor.fetchall()
-                    pprint (tabela)
+                    comandoConexaoBD(query)
                 case 2:
                     query = f'UPDATE TB_DIAGNOSTICO set {campo} = {valor_novo} WHERE id_diagnostico = {id_digitado}'
                     cursor.execute(query)
@@ -682,7 +709,8 @@ def funcaoAdquirirServico(user, lista_id, dict_clientes):
                     cursor.execute(query)
                     tabela = cursor.fetchall()
                     pprint (tabela) 
-            '''           
+            '''
+                  
                 
             #SPRINT4 VALIDAR SE EXISTE O COD_DIAGNOSTICO NO USUARIO (BANCO)
                         

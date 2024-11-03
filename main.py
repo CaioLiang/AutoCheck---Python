@@ -22,7 +22,7 @@ dict_codDiagnostico = {}
 
 user = funcaoTelaLogin(dict_clientes, lista_id, lista_nomes)
 
-arquivo = 'credenciais.json'
+caminho = 'credenciais.json'
 
 while True:   
   
@@ -52,17 +52,14 @@ while True:
     
     user = manterLogin(user, dict_clientes, lista_id, lista_nomes)
 
-    try: 
-        os.path.exists(arquivo)
-        os.remove(arquivo)
-        print(f'O arquivo {arquivo} foi apagado com sucesso.')
-    except:
-        print(f'O arquivo {arquivo} não foi encontrado.')
+    excluiCredenciais(caminho)  
 
     #DEV       
     print("\n", dict_clientes)
     print("\n", lista_nomes)
     print("\n", lista_id)
+
+excluiCredenciais(caminho)
 
 print("\n", dict_clientes)
 print("\n", lista_nomes)
