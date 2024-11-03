@@ -271,8 +271,8 @@ def comandoConexaoBD(query_script):
     conn.close()
     
 def lerLogin():
-    print("\n----------------LEITURA DOS USUARIOS - BANCO ----------------\n")
     dicionario = comandoConexaoBD('SELECT * FROM TB_LOGIN')
+    print("\n----------------LEITURA DOS USUARIOS - BANCO ----------------\n")
     return dicionario
 
 def gera_digito_verificador(cpf_parcial):
@@ -403,8 +403,28 @@ def funcaoAdquirirServico(user, lista_id, dict_clientes, lista_cod_diagostico):
         case 1:
             print("\nEntendo, preciso de mais informações do seu automóvel: \n" +
             "Preencha os seguintes campos: \n")
+            
+            cadastro_carro = True
+        
             automovel_chassi = str(input("Chassi: "))
+            
+            while len(automovel_chassi) != 17:
+                print("\nQUANTIDADE INVALIDA! ")
+                print("\nO CHASSI é composto por 17 caracteres exatamente, tente novamente!\n")
+                automovel_chassi = str(input("Chassi: "))
+            
             automovel_chassi = validaMinCaracteres(automovel_chassi, 17, "Chassi: ")
+            
+            sql_select_chassi = "SELECT chassi_carro FROM tb_carro"
+            print("\n----------------CONSULTANDO CHASSIS----------------")
+            todos_chassi  = comandoConexaoBD(sql_select_chassi)                    
+            lista_chassis = []
+            for chassi in todos_chassi:
+                lista_chassis.append(chassi[0])
+            
+            if automovel_chassi in lista_chassis:
+                cadastro_carro = False
+                       
             automovel_ano = tryExceptInputMenu("Ano: ")
             automovel_ano = validaAno(automovel_ano)
             automovel_marca = str(input("Marca: "))
@@ -464,12 +484,16 @@ def funcaoAdquirirServico(user, lista_id, dict_clientes, lista_cod_diagostico):
                     print("\n-------------INSERINDO DIAGNOSTICO-------------")
                     sql_inserir_diagnostico = f"INSERT INTO TB_DIAGNOSTICO (cod_falha_diagnostico, categoria_diagnostico, descricao_diagnostico, descricao_problema_diagnostico) VALUES ('{cod_falha_usuario}', '{categoria_diagnostico}', '{desc_falha}', '{sintomas_automovel}')"
                     comandoConexaoBD(sql_inserir_diagnostico)
-                    print("\n-------------INSERINDO CARRO-------------")
-                    sql_inserir_automovel = f"INSERT INTO tb_carro (chassi_carro, marca_carro, modelo_carro, ano_fabricacao_carro, ano_modelo_carro) VALUES ('{automovel_chassi}', '{automovel_marca}', '{automovel_modelo}', '{automovel_ano}', '{automovel_ano_modelo}')"
-                    comandoConexaoBD(sql_inserir_automovel)
+                    if cadastro_carro:    
+                        print("\n-------------INSERINDO CARRO-------------")
+                        sql_inserir_automovel = f"INSERT INTO tb_carro (chassi_carro, marca_carro, modelo_carro, ano_fabricacao_carro, ano_modelo_carro) VALUES ('{automovel_chassi}', '{automovel_marca}', '{automovel_modelo}', '{automovel_ano}', '{automovel_ano_modelo}')"
+                        comandoConexaoBD(sql_inserir_automovel)
                     print("\n-------------BUSCANDO ID CARRO-------------")
                     sql_select_carro = f"SELECT id_carro FROM tb_carro WHERE chassi_carro = '{automovel_chassi}'"
                     id_carro_cadastro = comandoConexaoBD(sql_select_carro)                
+                    print("\n-------------ATRELANDO CARRO AO DIAGNOSTICO-------------")
+                    sql_inserir_carro_diagnostico = f"INSERT INTO tb_carro_diagnostico (id_diagnostico, id_carro) VALUES ({int(cod_diagnostico)}, {int(id_carro_cadastro[0][0])})"
+                    comandoConexaoBD(sql_inserir_carro_diagnostico)
                     print("\n-------------ATRELANDO CARRO AO USUARIO-------------")
                     sql_inserir_usuario_automovel = f"INSERT INTO tb_usuario_carro (id_usuario, id_carro, ativo) VALUES ({int(list(dict_clientes[user].keys())[0])}, {int(id_carro_cadastro[0][0])}, 'S')" 
                     comandoConexaoBD(sql_inserir_usuario_automovel)
@@ -504,7 +528,6 @@ def funcaoAdquirirServico(user, lista_id, dict_clientes, lista_cod_diagostico):
                     conhecimento_causa = tryExceptInputMenu("Digite uma das opções: ")
                     conhecimento_causa = validacaoMatch(2, conhecimento_causa)
                     if(conhecimento_causa == 1):
-                        
                         dict_cod_falha = {
                         #"cod_falha": ("descrição tecnica", valor estimado)
                         "C0800": ("Tensao Bateria Tensão da bateria", 340.00),   
@@ -524,6 +547,7 @@ def funcaoAdquirirServico(user, lista_id, dict_clientes, lista_cod_diagostico):
                         
                         match area_afetada:
                             case 1:
+                                categoria_diagnostico = 'E'
                                 print("\nEntre as possiveis falhas estão: \n")  
                                 print("╔════════════════════════════════════════════╗")
                                 print("║         **POSSÍVEL FALHA ELÉTRICA**        ║")
@@ -568,28 +592,45 @@ def funcaoAdquirirServico(user, lista_id, dict_clientes, lista_cod_diagostico):
                                 
                                 #SPRINT4
                                 dict_diagnostico =  {
-                                    'user' : user,
+                                    'usuario' : {user : dict_clientes[user]},
                                     'automovel_dados' : 
                                         {
-                                        
+                                        'automovel_chassi': automovel_chassi,
                                         'automovel_ano': automovel_ano,
                                         'automovel_marca': automovel_marca,
                                         'automovel_modelo': automovel_modelo,
-                                        'automovel_motor': automovel_motor
-                                        
+                                        'automovel_ano_modelo': automovel_ano_modelo,
+                                        'automovel_motor': automovel_motor  
                                         },
                                     'sintomas_automovel': sintomas_automovel,
+                                    'categoria_diagnostico': categoria_diagnostico,
                                     'cod_diagnostico' : cod_diagnostico,
                                     'cod_falha' : cod_falha,
                                     'desc_falha' : dict_cod_falha[cod_falha][0],
                                     'orca_previo' : dict_cod_falha[cod_falha][1],
                                     
                                 }
+                                print("\n-------------INSERINDO DIAGNOSTICO-------------")
+                                sql_inserir_diagnostico = f"INSERT INTO TB_DIAGNOSTICO (cod_falha_diagnostico, categoria_diagnostico, descricao_diagnostico, descricao_problema_diagnostico) VALUES ('{cod_falha}', '{categoria_diagnostico}', '{dict_cod_falha[cod_falha][0]}', '{sintomas_automovel}')"
+                                comandoConexaoBD(sql_inserir_diagnostico)
+                                if cadastro_carro:    
+                                    print("\n-------------INSERINDO CARRO-------------")
+                                    sql_inserir_automovel = f"INSERT INTO tb_carro (chassi_carro, marca_carro, modelo_carro, ano_fabricacao_carro, ano_modelo_carro) VALUES ('{automovel_chassi}', '{automovel_marca}', '{automovel_modelo}', '{automovel_ano}', '{automovel_ano_modelo}')"
+                                    comandoConexaoBD(sql_inserir_automovel)
+                                print("\n-------------BUSCANDO ID CARRO-------------")
+                                sql_select_carro = f"SELECT id_carro FROM tb_carro WHERE chassi_carro = '{automovel_chassi}'"
+                                id_carro_cadastro = comandoConexaoBD(sql_select_carro)                
+                                print("\n-------------ATRELANDO CARRO AO DIAGNOSTICO-------------")
+                                sql_inserir_carro_diagnostico = f"INSERT INTO tb_carro_diagnostico (id_diagnostico, id_carro) VALUES ({int(cod_diagnostico)}, {int(id_carro_cadastro[0][0])})"
+                                comandoConexaoBD(sql_inserir_carro_diagnostico)
+                                print("\n-------------ATRELANDO CARRO AO USUARIO-------------")
+                                sql_inserir_usuario_automovel = f"INSERT INTO tb_usuario_carro (id_usuario, id_carro, ativo) VALUES ({int(list(dict_clientes[user].keys())[0])}, {int(id_carro_cadastro[0][0])}, 'S')" 
+                                comandoConexaoBD(sql_inserir_usuario_automovel)
                                 
                                 exportarJson(dict_diagnostico)
                             
                             case 2: 
-                                
+                                categoria_diagnostico = 'M'
                                 print("\nEntre as possiveis falhas estão: \n")  
                                 print("╔════════════════════════════════════════════╗")
                                 print("║        **POSSÍVEIS FALHA MECÂNICA**        ║")
@@ -632,27 +673,48 @@ def funcaoAdquirirServico(user, lista_id, dict_clientes, lista_cod_diagostico):
                                 
                                 #SPRINT4
                                 dict_diagnostico =  {
-                                    'user' : user,  
+                                    'usuario' : {user : dict_clientes[user]},   
                                     'automovel_dados' : 
                                         {
-                                        
+                                        'automovel_chassi': automovel_chassi,
                                         'automovel_ano': automovel_ano,
                                         'automovel_marca': automovel_marca,
                                         'automovel_modelo': automovel_modelo,
-                                        'automovel_motor': automovel_motor
-                                        
+                                        'automovel_ano_modelo': automovel_ano_modelo,
+                                        'automovel_motor': automovel_motor 
                                         },
                                     'sintomas_automovel': sintomas_automovel,
+                                    'categoria_diagnostico': categoria_diagnostico,
                                     'cod_diagnostico' : cod_diagnostico,
                                     'cod_falha' : cod_falha,
                                     'desc_falha' : dict_cod_falha[cod_falha][0],
                                     'orca_previo' : dict_cod_falha[cod_falha][1],
                                     
                                 }
+                                print("\n-------------INSERINDO DIAGNOSTICO-------------")
+                                sql_inserir_diagnostico = f"INSERT INTO TB_DIAGNOSTICO (cod_falha_diagnostico, categoria_diagnostico, descricao_diagnostico, descricao_problema_diagnostico) VALUES ('{cod_falha}', '{categoria_diagnostico}', '{dict_cod_falha[cod_falha][0]}', '{sintomas_automovel}')"
+                                comandoConexaoBD(sql_inserir_diagnostico)
+                                if cadastro_carro:    
+                                    print("\n-------------INSERINDO CARRO-------------")
+                                    sql_inserir_automovel = f"INSERT INTO tb_carro (chassi_carro, marca_carro, modelo_carro, ano_fabricacao_carro, ano_modelo_carro) VALUES ('{automovel_chassi}', '{automovel_marca}', '{automovel_modelo}', '{automovel_ano}', '{automovel_ano_modelo}')"
+                                    comandoConexaoBD(sql_inserir_automovel)
+                                print("\n-------------BUSCANDO ID CARRO-------------")
+                                sql_select_carro = f"SELECT id_carro FROM tb_carro WHERE chassi_carro = '{automovel_chassi}'"
+                                id_carro_cadastro = comandoConexaoBD(sql_select_carro)                
+                                print("\n-------------ATRELANDO CARRO AO DIAGNOSTICO-------------")
+                                sql_inserir_carro_diagnostico = f"INSERT INTO tb_carro_diagnostico (id_diagnostico, id_carro) VALUES ({int(cod_diagnostico)}, {int(id_carro_cadastro[0][0])})"
+                                comandoConexaoBD(sql_inserir_carro_diagnostico)
+                                print("\n-------------ATRELANDO CARRO AO USUARIO-------------")
+                                sql_inserir_usuario_automovel = f"INSERT INTO tb_usuario_carro (id_usuario, id_carro, ativo) VALUES ({int(list(dict_clientes[user].keys())[0])}, {int(id_carro_cadastro[0][0])}, 'S')" 
+                                comandoConexaoBD(sql_inserir_usuario_automovel)
                                 
                                 exportarJson(dict_diagnostico)
                                             
                     else:
+                        categoria_diagnostico = 'N'
+                        orca_previo = "Em análise"
+                        desc_falha = "Em análise"
+                        cod_falha_usuario = "AAAAA"
                         print("\nSucesso, seu diagnóstico foi encaminhado para : CENTRO AUTOMOTIVO - BELA VISTA - RUA PEDROSO. Entraremos em contato em breve! \n")                            
                         print("Descrição da falha: Em análise pelo especialista. Aguarde contato!")
                         print(f"Orçamento prévio: Em análise.")
@@ -660,22 +722,41 @@ def funcaoAdquirirServico(user, lista_id, dict_clientes, lista_cod_diagostico):
                         print(f"Código do Diagnóstico: {cod_diagnostico}\n") 
                         #SPRINT4
                         dict_diagnostico =  {
-                            'user' : user,            
+                            'usuario' : {user : dict_clientes[user]},            
                             'automovel_dados' : 
                                 {
+                                'automovel_chassi': automovel_chassi,
                                 'automovel_ano': automovel_ano,
                                 'automovel_marca': automovel_marca,
                                 'automovel_modelo': automovel_modelo,
+                                'automovel_ano_modelo': automovel_ano_modelo,
                                 'automovel_motor': automovel_motor            
                                 },
                             'sintomas_automovel': sintomas_automovel,
+                            'categoria_diagnostico': categoria_diagnostico,
                             'cod_diagnostico' : cod_diagnostico,
-                            'cod_falha' : 'Em análise',
-                            'desc_falha' : 'Em análise',
-                            'orca_previo' : 'Em análise',
+                            'cod_falha' : cod_falha_usuario,
+                            'desc_falha' : desc_falha,
+                            'orca_previo' : orca_previo,
                                         
                             }
-                                    
+                        print("\n-------------INSERINDO DIAGNOSTICO-------------")
+                        sql_inserir_diagnostico = f"INSERT INTO TB_DIAGNOSTICO (cod_falha_diagnostico, categoria_diagnostico, descricao_diagnostico, descricao_problema_diagnostico) VALUES ('{cod_falha_usuario}', '{categoria_diagnostico}', '{desc_falha}', '{sintomas_automovel}')"
+                        comandoConexaoBD(sql_inserir_diagnostico)
+                        if cadastro_carro:    
+                            print("\n-------------INSERINDO CARRO-------------")
+                            sql_inserir_automovel = f"INSERT INTO tb_carro (chassi_carro, marca_carro, modelo_carro, ano_fabricacao_carro, ano_modelo_carro) VALUES ('{automovel_chassi}', '{automovel_marca}', '{automovel_modelo}', '{automovel_ano}', '{automovel_ano_modelo}')"
+                            comandoConexaoBD(sql_inserir_automovel)
+                        print("\n-------------BUSCANDO ID CARRO-------------")
+                        sql_select_carro = f"SELECT id_carro FROM tb_carro WHERE chassi_carro = '{automovel_chassi}'"
+                        id_carro_cadastro = comandoConexaoBD(sql_select_carro)                
+                        print("\n-------------ATRELANDO CARRO AO DIAGNOSTICO-------------")
+                        sql_inserir_carro_diagnostico = f"INSERT INTO tb_carro_diagnostico (id_diagnostico, id_carro) VALUES ({int(cod_diagnostico)}, {int(id_carro_cadastro[0][0])})"
+                        comandoConexaoBD(sql_inserir_carro_diagnostico)
+                        print("\n-------------ATRELANDO CARRO AO USUARIO-------------")
+                        sql_inserir_usuario_automovel = f"INSERT INTO tb_usuario_carro (id_usuario, id_carro, ativo) VALUES ({int(list(dict_clientes[user].keys())[0])}, {int(id_carro_cadastro[0][0])}, 'S')" 
+                        comandoConexaoBD(sql_inserir_usuario_automovel)            
+                        
                         exportarJson(dict_diagnostico)              
 
             #adicionando cliente no dicionario - dict_clientes 
@@ -720,11 +801,12 @@ def funcaoAdquirirServico(user, lista_id, dict_clientes, lista_cod_diagostico):
             acompanhar_diagnostico = validacaoMatch(3, acompanhar_diagnostico)
             
             #REMOVER
-            ''' 
+            '''
             match acompanhar_diagnostico:
                 case 1:
-                    query = f'SELECT {cod_diagnostico} from TB_DIAGNOSTICO'
-                    comandoConexaoBD(query)
+                    try:        
+                        query = f'SELECT id{cod_diagnostico} from TB_DIAGNOSTICO'
+                        comandoConexaoBD(query)
                 case 2:
                     query = f'UPDATE TB_DIAGNOSTICO set {campo} = {valor_novo} WHERE id_diagnostico = {id_digitado}'
                     cursor.execute(query)
@@ -736,6 +818,7 @@ def funcaoAdquirirServico(user, lista_id, dict_clientes, lista_cod_diagostico):
                     tabela = cursor.fetchall()
                     pprint (tabela) 
             '''
+           
                   
                 
             #SPRINT4 VALIDAR SE EXISTE O COD_DIAGNOSTICO NO USUARIO (BANCO)
