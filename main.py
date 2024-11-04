@@ -51,9 +51,10 @@ while True:
     
     user = manterLogin(user, dict_clientes, lista_id, lista_nomes)
 
-    excluiCredenciais(caminho)  
-
+caminho = 'credenciais.json'   
 excluiCredenciais(caminho)
-
+caminho = "lista_marcas_carros.json"
+excluiCredenciais(caminho)  
+    
 print("\nObrigado, volte sempre!")
 #AUTOCHECK @2024

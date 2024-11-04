@@ -202,7 +202,7 @@ def funcaoDictClientes(lista_id, lista_nomes):
 
 def exportarJson(dict_diagnostico): 
     
-    print("Deseja exportar arquivo em JSON?\n" + 
+    print("\nDeseja exportar arquivo em JSON?\n" + 
       "1 = SIM\n" + 
       "2 = NÃO\n")
 
@@ -221,9 +221,9 @@ def credenciaisJson():
     import json
     
     print("\nCONEXÃO COM BANCO DE DADOS\n" +
-          "Forneça suas credencias para conexão com banco de dados da ORACLE - FIAP: \n")
+          "\nForneça suas credencias para conexão com banco de dados da ORACLE - FIAP: \n")
     
-    print("\nNota: digite seu do seguinte modelo 'rm ou p' + 'numeros do rm ou p' | ex: rm111111 \n")
+    print("\nNota: digite seu LOGIN no seguinte modelo 'rm ou p' + 'numeros' | ex: rm111111 \n")
     
     user = input("Digite o seu login: ")
     password = input("Digite a sua senha: ")
@@ -365,6 +365,29 @@ def printRegistro(resultado_diagnostico, cabecalhos):
     exibir_tabela(resultado_diagnostico, cabecalhos)
     print("\n")
      
+def getApi(url):
+    import requests
+    import json
+    
+    caminho_marcas = "lista_marcas_carros.json"
+
+    while True:
+        if os.path.exists(caminho_marcas):
+            with open(caminho_marcas, 'r') as arquivo:
+                info_lista = json.load(arquivo)
+                return info_lista    
+        
+        else: 
+            print("\n----------------REQUISIÇÃO API----------------\n")
+            response = requests.get(url)
+            
+            if response.status_code == 200:
+                lista_marca_carros = response.json()
+                
+            with open ('lista_marcas_carros.json', 'w', encoding='utf-8') as arquivo:
+                json.dump(lista_marca_carros, arquivo, ensure_ascii= False, indent=4)
+        
+
 #SISTEMA
 
 def funcaoTelaLogin(dict_clientes, lista_id, lista_nomes ):
@@ -475,11 +498,31 @@ def funcaoAdquirirServico(user, lista_id, dict_clientes, lista_cod_diagostico):
             
             if automovel_chassi in lista_chassis:
                 cadastro_carro = False
-                       
+                
+            url = "https://parallelum.com.br/fipe/api/v1/carros/marcas"
+            
+            dados_marca_carros = []
+            lista_marcas = []
+            
+            dados_marca_carros = getApi(url)
+
+            for dado in dados_marca_carros: 
+                lista_marcas.append(dado['nome'].upper())
+                      
             automovel_ano = tryExceptInputMenu("Ano: ")
             automovel_ano = validaAno(automovel_ano)
+            
             automovel_marca = str(input("Marca: "))
-            automovel_marca = validaMinCaracteres(automovel_marca, 3, "Marca: ")
+            
+            while automovel_marca not in lista_marcas: 
+                print("\nMARCA NÃO REGISTRADA!\n")
+                print("Marcas de Carros Disponíveis:")
+                print("-" * 30)
+                for index, marca in enumerate(lista_marcas, start=1):
+                    print(f"{index}. {marca}")
+                print("-" * 30)
+                automovel_marca = str(input("\nDigite a marca: ")).upper()
+
             automovel_modelo = str(input("Modelo: "))
             automovel_modelo = validaMinCaracteres(automovel_modelo, 3, "Modelo: ")
             automovel_ano_modelo = tryExceptInputMenu("Ano do modelo: ")
