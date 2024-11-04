@@ -2,8 +2,6 @@ from biblioteca import *
 
 #AUTOCHECK NOTAS:
 
-# Dicionario de usuários
-
 lista_id = []
 lista_nomes = []
 
@@ -55,18 +53,7 @@ while True:
 
     excluiCredenciais(caminho)  
 
-    #DEV       
-    print("\n", dict_clientes)
-    print("\n", lista_nomes)
-    print("\n", lista_id)
-
-
 excluiCredenciais(caminho)
-
-print("\n", dict_clientes)
-print("\n", lista_nomes)
-print("\n", lista_id)
-
 
 print("\nObrigado, volte sempre!")
 #AUTOCHECK @2024
