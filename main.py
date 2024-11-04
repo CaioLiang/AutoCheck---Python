@@ -26,7 +26,7 @@ user = funcaoTelaLogin(dict_clientes, lista_id, lista_nomes)
 caminho = 'credenciais.json'
 
 while True:   
-  
+    
     print(f"\n{user}, Seja bem-vindo ao serviço de diagnóstico automotivo digital da Porto-Seguro! \n")
     
     print("╔═════════════════════════════════╗")

@@ -312,6 +312,21 @@ def lerCodDiagnostico():
         lista_id_diagnostico.append(info[0])
     return lista_id_diagnostico    
 
+def exibir_tabela(dados, cabecalhos):
+    largura_colunas = [len(cab) for cab in cabecalhos]
+
+    for linha in dados:
+        for i, valor in enumerate(linha):
+            largura_colunas[i] = max(largura_colunas[i], len(str(valor)))
+
+    linha_formatada = '| ' + ' | '.join([f"{{:<{largura}}}" for largura in largura_colunas]) + ' |'
+
+    print(linha_formatada.format(*cabecalhos))
+    print('-' * (sum(largura_colunas) + 3 * len(cabecalhos) + 1))
+
+    for linha in dados:
+        print(linha_formatada.format(*linha))
+        
 #SISTEMA
 
 def funcaoTelaLogin(dict_clientes, lista_id, lista_nomes ):
@@ -329,7 +344,7 @@ def funcaoTelaLogin(dict_clientes, lista_id, lista_nomes ):
 
     if tela_login_menu == 1: 
         while True:
-            user = str(input("Formato padrão : 'nome.sobrenome'\n"+ 
+            user = str(input("Formato padrão : Mínimo de 6 caracteres'\n"+ 
                              "Digite nome do seu usuario: "))
             user = validaMinCaracteres(user, 6,"Formato padrão : 'nome.sobrenome'\nDigite nome do seu usuario: ")
             if user in dict_clientes.keys():
@@ -772,62 +787,147 @@ def funcaoAdquirirServico(user, lista_id, dict_clientes, lista_cod_diagostico):
                 "\n2 - Alameda Araguaia, 211 - Alphaville Industrial, Barueri - SP, 06455-000\n" +
                 "\n3 - Alameda Araguaia, 3600 - Tamboré, Barueri - SP, 06455-000 \n")            
         case 3:
+                     
+            consulta_id_usuario = int(list(dict_clientes[user].keys())[0])
             
-            credenciaisJson()
+            sql_select_usuarios = "SELECT id_usuario FROM tb_usuario_carro"
+            print("\n----------------CONSULTANDO USUARIOS----------------")
+            todos_usuarios  = comandoConexaoBD(sql_select_usuarios)                    
+            lista_usuarios = []
+            for usuario in todos_usuarios:
+                lista_usuarios.append(usuario[0])
             
-            while True:
-                try:
-                    conn = conecta_banco()
-                    cursor = conn.cursor()
-                except: 
-                    print("\nERROP DE CREDENCIAIS\n")
-                    credenciaisJson()
-                break
-                    
-            print("\nAcompanhamento de Diagnóstico \n")
-            cod_diagnostico = tryExceptInputMenu("Digite seu código de diagnóstico: ")
-            cod_diagnostico = validaCodigoDiagnostico(cod_diagnostico)
-            
-            print("\nOpções de acompanhamento: \n")  
-            print("╔════════════════════════════════════════════╗")
-            print("║         **ACOMPANHAR DIAGNOSTICO**         ║")
-            print("║                                            ║")
-            print("║ 1 - Ver informações                        ║")
-            print("║ 2 - Atualizar diagnostico                  ║")
-            print("║ 3 - Deletar diagnostico                    ║")                     
-            print("╚════════════════════════════════════════════╝  \n")
-            
-            acompanhar_diagnostico = input("Digite uma das opções acima: ")
-            acompanhar_diagnostico = validacaoMatch(3, acompanhar_diagnostico)
-            
-            #REMOVER
-            '''
-            match acompanhar_diagnostico:
-                case 1:
-                    try:        
-                        query = f'SELECT id{cod_diagnostico} from TB_DIAGNOSTICO'
-                        comandoConexaoBD(query)
-                case 2:
-                    query = f'UPDATE TB_DIAGNOSTICO set {campo} = {valor_novo} WHERE id_diagnostico = {id_digitado}'
-                    cursor.execute(query)
-                    tabela = cursor.fetchall()
-                    pprint (tabela)
-                case 3:
-                    query = f'DELETE FROM TB_DIAGNOSTICO WHERE id_diagnostico = {id_digitado}'
-                    cursor.execute(query)
-                    tabela = cursor.fetchall()
-                    pprint (tabela) 
-            '''
-           
-                  
+            if consulta_id_usuario in lista_usuarios:
                 
-            #SPRINT4 VALIDAR SE EXISTE O COD_DIAGNOSTICO NO USUARIO (BANCO)
+                print("\nAcompanhamento de Diagnóstico \n")
+                
+                print("\nOpções de acompanhamento: \n")  
+                print("╔════════════════════════════════════════════╗")
+                print("║         **ACOMPANHAR DIAGNOSTICO**         ║")
+                print("║                                            ║")
+                print("║ 1 - Ver informações                        ║")
+                print("║ 2 - Atualizar descrição                    ║")
+                print("║ 3 - Deletar diagnostico                    ║")                     
+                print("╚════════════════════════════════════════════╝  \n")
+                
+                acompanhar_diagnostico = input("Digite uma das opções acima: ")
+                acompanhar_diagnostico = validacaoMatch(3, acompanhar_diagnostico)
+                
+                #REMOVER
+                
+               
+                
+                match acompanhar_diagnostico:
+                    case 1:
+                        cabecalhos = ['ID', 'Código de Falha', 'Classe', 'Descrição Curta', 'Descrição Usuário']
                         
-            print(f"\nO Diagnóstico de código: '{cod_diagnostico}' está registrado na : CENTRO AUTOMOTIVO - BELA VISTA - RUA PEDROSO. Estamos no seu aguardo! \n") 
-            print("Descrição da falha: Em análise")
-            print(f"Orçamento prévio: Em análise.")
-            print(f"Código do Diagnóstico: {cod_diagnostico}\n")
-
+                        query = f"SELECT id_carro FROM tb_usuario_carro WHERE id_usuario = '{consulta_id_usuario}'"
+                        todos_carros  = comandoConexaoBD(query)                    
+                        lista_carros = []
+                        for carro in todos_carros:
+                            lista_carros.append(str(carro[0]))
+                
+                        if len(lista_carros) >= 2:
+                            print("\nVocê possui essses automoveis cadastrados: " , lista_carros)
+                            carro_consulta = input("Escolha uma das opções de carro: ")
+                            while carro_consulta not in lista_carros:
+                                print("\nOpção inválida! \n")
+                                carro_consulta = input("Escolha uma das opções de carro: ")                 
+                        else:
+                            carro_consulta = lista_carros[0]
+                       
+                        
+                        query = f"SELECT id_diagnostico FROM TB_CARRO_DIAGNOSTICO WHERE id_carro = '{carro_consulta}'"
+                        todos_id_diagnostico  = comandoConexaoBD(query)                    
+                        lista_id_diagnostico = []
+                        for id in todos_id_diagnostico:
+                            lista_id_diagnostico.append(str(id[0]))
+                        
+                        if len(lista_id_diagnostico) >= 2:
+                            print("\nVocê possui essses id diagnostico cadastrados nesse carro: " , lista_id_diagnostico)
+                            diagnostico_consulta = input("Escolha uma das opções de id diagnostico: ")
+                            while diagnostico_consulta not in lista_id_diagnostico:
+                                print("\nOpção inválida! \n")
+                                diagnostico_consulta = input("Escolha uma das opções de id diagnostico: ")                 
+                        
+                        else:
+                            diagnostico_consulta = lista_id_diagnostico[0]
+                        
+                        query = f"SELECT * FROM TB_DIAGNOSTICO WHERE id_diagnostico = '{diagnostico_consulta}'"
+                        resultado_diagnostico  = comandoConexaoBD(query)
+                    
+                        print("\n\n")
+                        exibir_tabela(resultado_diagnostico, cabecalhos)
+                        print("\n")
+                        
+                    case 2:
+                        print("\nATUALIZAR DESCRIÇÃO DO DIAGNOSTICO")
+                        
+                        cabecalhos = ['ID', 'Código de Falha', 'Classe', 'Descrição Curta', 'Descrição Usuário']
+                        
+                        query = f"SELECT id_carro FROM tb_usuario_carro WHERE id_usuario = '{consulta_id_usuario}'"
+                        todos_carros  = comandoConexaoBD(query)                    
+                        lista_carros = []
+                        for carro in todos_carros:
+                            lista_carros.append(str(carro[0]))
+                
+                        if len(lista_carros) >= 2:
+                            print("\nVocê possui essses automoveis cadastrados: " , lista_carros)
+                            carro_consulta = input("Escolha uma das opções de carro: ")
+                            while carro_consulta not in lista_carros:
+                                print("\nOpção inválida! \n")
+                                carro_consulta = input("Escolha uma das opções de carro: ")                 
+                        else:
+                            carro_consulta = lista_carros[0]
+                       
+                        
+                        query = f"SELECT id_diagnostico FROM TB_CARRO_DIAGNOSTICO WHERE id_carro = '{carro_consulta}'"
+                        todos_id_diagnostico  = comandoConexaoBD(query)                    
+                        lista_id_diagnostico = []
+                        for id in todos_id_diagnostico:
+                            lista_id_diagnostico.append(str(id[0]))
+                        
+                        if len(lista_id_diagnostico) >= 2:
+                            print("\nVocê possui essses id diagnostico cadastrados nesse carro: " , lista_id_diagnostico)
+                            diagnostico_consulta = input("Escolha uma das opções de id diagnostico: ")
+                            while diagnostico_consulta not in lista_id_diagnostico:
+                                print("\nOpção inválida! \n")
+                                diagnostico_consulta = input("Escolha uma das opções de id diagnostico: ")                 
+                        
+                        else:
+                            diagnostico_consulta = lista_id_diagnostico[0]
+                        
+                        nova_descricao = input("Digite a descrição do problema do veiculo: ")
+                        nova_descricao = validaMinCaracteres(nova_descricao, 10, "Entendo, descreve o problema do seu automóvel: ")
+                        
+                        query = f"UPDATE TB_DIAGNOSTICO set descricao_problema_diagnostico = '{nova_descricao}' WHERE id_diagnostico = '{diagnostico_consulta}'"
+                        comandoConexaoBD(query)
+                        
+                        query = f"SELECT * FROM TB_DIAGNOSTICO WHERE id_diagnostico = '{diagnostico_consulta}'"
+                        resultado_diagnostico  = comandoConexaoBD(query)
+                        
+                        print("\n\n")
+                        exibir_tabela(resultado_diagnostico, cabecalhos)
+                        print("\n")
+                        
+                        '''
+                    case 3:
+                        query = f'DELETE FROM TB_DIAGNOSTICO WHERE id_diagnostico = {id_digitado}'
+                        cursor.execute(query)
+                        tabela = cursor.fetchall()
+                        pprint (tabela) 
+            
+                            
+                print(f"\nO Diagnóstico de código: '{cod_diagnostico}' está registrado na : CENTRO AUTOMOTIVO - BELA VISTA - RUA PEDROSO. Estamos no seu aguardo! \n") 
+                print("Descrição da falha: Em análise")
+                print(f"Orçamento prévio: Em análise.")
+                print(f"Código do Diagnóstico: {cod_diagnostico}\n")
+                
+                '''
+            else: 
+                print("\nNENHUM DIAGNÓSTICO IDENTIFICADO PARA SEU USUÁRIO! \n")
+                print("RETORNANDO AO MENU PRINCIPAL!\n")                
+                
 def funcaoFaleConosco():
     '''
     Procedimento de feedback da experiência conforme categoria: elogio, reclamação, problemas de funcionalidades ou outros.
