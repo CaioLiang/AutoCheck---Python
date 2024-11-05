@@ -18,11 +18,17 @@ Este projeto tem como objetivo diagnosticar com acertividade os problemas automo
 
 3. **Execução do Projeto**:
     Após configurar o banco de dados e instalar as dependências, execute o projeto com o seguinte comando:
+    
+    Verifique se o caminho do terminal está na raiz do projeto (AUTOCHECK---PYTHON)
 
     ```sh
     python main.py
     ```
 
+3. **API**:
+    API: https://deividfortuna.github.io/fipe/
+    Autor: https://github.com/deividfortuna/fipe
+    
 ## Estrutura do Projeto
 
 - `main.py`: Arquivo principal do projeto.
